@@ -54,6 +54,12 @@
   "category": "医師用",
   "url": "https://haman-360.github.io/atopic-calculator/atopic_calculator.html",
   "visible": true
-}
-
+},
+  {
+    "name": "日計売上 入力",
+    "description": "入力画面",
+    "category": "医師用",
+    "url": "https://script.google.com/macros/s/AKfycby5krfCy8W62qZzgBule24N37qKkzfp8GLLI8EQ35pE--TKre-RLvpZk4Ykpqk5JoA/exec",
+    "visible": true
+  }
 ]
