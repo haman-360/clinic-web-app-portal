@@ -40,5 +40,20 @@
     "category": "管理用",
     "url": "https://script.google.com/macros/s/AKfycbyIGLsSur088ftzSGgwHOuiNeIgBUq7LE2yZiyrsjtQuLE-QXeJuCeeD002m6qBoLzN/exec?action=doctorEntry&patient_id=06486&limit=5",
     "visible": true
-  }
+  },
+  {
+    "name": "アトピー性皮膚炎 詳細",
+    "description": "視覚的にわかりやすい詳細版",
+    "category": "医師用",
+    "url": "https://haman-360.github.io/atopic-calculator/atopy_v8.html",
+    "visible": true
+  },
+  {
+  "name": "アトピー性皮膚炎 軟膏の計算",
+  "description": "スタッフに表示する説明",
+  "category": "医師用",
+  "url": "https://haman-360.github.io/atopic-calculator/atopic_calculator.html",
+  "visible": true
+}
+
 ]
