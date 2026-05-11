@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="院内Webアプリと業務リンクをまとめて起動できるポータルサイト">
+    <title>Clinic Web App Portal</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <div>
+          <p class="eyebrow">Clinic Portal</p>
+          <h1>Webアプリ ポータル</h1>
+        </div>
+        <p class="header-note">院内で使うWebアプリ・業務リンクをまとめて起動できます。</p>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="toolbar" aria-label="アプリの絞り込み">
+        <label class="search-box" for="searchInput">
+          <span>検索</span>
+          <input id="searchInput" type="search" placeholder="アプリ名・説明で検索" autocomplete="off">
+        </label>
+
+        <div class="category-tabs" id="categoryTabs" role="tablist" aria-label="カテゴリ">
+          <button class="tab-button is-active" type="button" data-category="all" aria-pressed="true">すべて</button>
+        </div>
+      </section>
+
+      <section class="summary-row" aria-live="polite">
+        <p id="resultSummary">読み込み中...</p>
+      </section>
+
+      <section class="app-grid" id="appGrid" aria-label="アプリ一覧"></section>
+
+      <section class="empty-state" id="emptyState" hidden>
+        <h2>該当するアプリがありません</h2>
+        <p>検索語句やカテゴリを変更してください。</p>
+      </section>
+
+      <section class="error-state" id="errorState" hidden>
+        <h2>アプリ一覧を読み込めませんでした</h2>
+        <p>apps.json の形式や配置を確認してください。</p>
+      </section>
+    </main>
+
+    <template id="appCardTemplate">
+      <article class="app-card">
+        <div class="card-body">
+          <div class="card-topline">
+            <span class="category-badge"></span>
+            <span class="visibility-note" hidden>非表示</span>
+          </div>
+          <h2></h2>
+          <p class="description"></p>
+        </div>
+        <a class="launch-button" target="_blank" rel="noopener noreferrer">起動</a>
+      </article>
+    </template>
+
+    <script src="script.js" defer></script>
+  </body>
+</html>

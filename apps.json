@@ -1,0 +1,30 @@
+[
+  {
+    "name": "喘息管理アプリ",
+    "description": "喘息患者の経過、FeNO、スパイロ、薬剤情報を管理するアプリ",
+    "category": "医師用",
+    "url": "https://example.com/asthma",
+    "visible": true
+  },
+  {
+    "name": "夜間LINE相談",
+    "description": "時間外相談の初期トリアージ用Webアプリ",
+    "category": "看護師用",
+    "url": "https://example.com/line",
+    "visible": true
+  },
+  {
+    "name": "受付チェックイン",
+    "description": "来院受付と問診状況を確認するための業務リンク",
+    "category": "受付用",
+    "url": "https://example.com/reception",
+    "visible": true
+  },
+  {
+    "name": "管理ダッシュボード",
+    "description": "運用状況や院内向け設定を確認する管理者用ページ",
+    "category": "管理用",
+    "url": "https://example.com/admin",
+    "visible": true
+  }
+]
