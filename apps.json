@@ -1,30 +1,44 @@
 [
   {
-    "name": "喘息管理アプリ",
+    "name": "喘息フォロー入力 Light",
     "description": "喘息患者の経過、FeNO、スパイロ、薬剤情報を管理するアプリ",
     "category": "医師用",
-    "url": "https://example.com/asthma",
+    "url": "https://script.google.com/macros/s/AKfycbyQk3cCfCBlCru7REOI9hvVB_qZ7Y3o7z8HHNiKJacWh9bCfM_DfgsKYe1DCSFJoggVkg/exec",
     "visible": true
   },
   {
-    "name": "夜間LINE相談",
+    "name": "喘息 spredsheet",
     "description": "時間外相談の初期トリアージ用Webアプリ",
-    "category": "看護師用",
-    "url": "https://example.com/line",
+    "category": "医師用",
+    "url": "https://docs.google.com/spreadsheets/d/1yoghnYq2JGSw7VOX1TaKfqU_sFCGeGA7kKUgRQiZf1o/edit?gid=0#gid=0",
     "visible": true
   },
   {
-    "name": "受付チェックイン",
+    "name": "喘息入力",
     "description": "来院受付と問診状況を確認するための業務リンク",
     "category": "受付用",
-    "url": "https://example.com/reception",
+    "url": "https://script.google.com/macros/s/AKfycbyQk3cCfCBlCru7REOI9hvVB_qZ7Y3o7z8HHNiKJacWh9bCfM_DfgsKYe1DCSFJoggVkg/exec",
     "visible": true
   },
   {
-    "name": "管理ダッシュボード",
+    "name": "受付用QR作成",
     "description": "運用状況や院内向け設定を確認する管理者用ページ",
     "category": "管理用",
-    "url": "https://example.com/admin",
+    "url": "https://haman-360.github.io/constipation/constipation-ai-mvp/visit-link.html",
+    "visible": true
+  },
+  {
+    "name": "医師用履歴URL作成",
+    "description": "運用状況や院内向け設定を確認する管理者用ページ",
+    "category": "管理用",
+    "url": "https://haman-360.github.io/constipation/constipation-ai-mvp/history-link.html",
+    "visible": true
+  },
+  {
+    "name": "便秘の治療：医師入力",
+    "description": "運用状況や院内向け設定を確認する管理者用ページ",
+    "category": "管理用",
+    "url": "https://script.google.com/macros/s/AKfycbyIGLsSur088ftzSGgwHOuiNeIgBUq7LE2yZiyrsjtQuLE-QXeJuCeeD002m6qBoLzN/exec?action=doctorEntry&patient_id=06486&limit=5",
     "visible": true
   }
 ]
