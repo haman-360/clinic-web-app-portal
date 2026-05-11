@@ -48,5 +48,5 @@ python3 -m http.server 8000
 
 1. このリポジトリをGitHubにpushします。
 2. GitHubのリポジトリ設定で `Settings` → `Pages` を開きます。
-3. `Deploy from a branch` を選び、公開したいブランチの `/root` を指定します。
+3. `GitHub Actions` を選びます。
 4. 発行されたURLにアクセスします。
