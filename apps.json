@@ -68,5 +68,13 @@
     "category": "医師用",
     "url": "https://script.google.com/macros/s/AKfycby5krfCy8W62qZzgBule24N37qKkzfp8GLLI8EQ35pE--TKre-RLvpZk4Ykpqk5JoA/exec",
     "visible": true
+  },
+  {
+    "name": "かかりつけ用 パスワード作成",
+    "description": "XXXX-XXXX-XXXXの形式でパスワードを作成するアプリ",
+    "category": "医師用",
+    "url": "https://haman-360.github.io/password-maker/",
+    "visible": true
   }
+  
 ]
