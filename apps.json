@@ -42,6 +42,13 @@
     "visible": true
   },
   {
+  "name": "便秘 spredsheet",
+  "description": "google spreadsheet",
+  "category": "医師用",
+  "url": "https://docs.google.com/spreadsheets/d/1DhLgt58Najnhie3C5RtwgcQwZVwjMykGrRLhfRTGurM/edit?gid=0#gid=0",
+  "visible": true
+  },
+  {
     "name": "アトピー性皮膚炎 詳細",
     "description": "視覚的にわかりやすい詳細版",
     "category": "医師用",
