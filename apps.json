@@ -35,13 +35,6 @@
     "visible": true
   },
   {
-    "name": "便秘の治療：医師入力",
-    "description": "運用状況や院内向け設定を確認する管理者用ページ",
-    "category": "管理用",
-    "url": "https://script.google.com/macros/s/AKfycbyIGLsSur088ftzSGgwHOuiNeIgBUq7LE2yZiyrsjtQuLE-QXeJuCeeD002m6qBoLzN/exec?action=doctorEntry&patient_id=06486&limit=5",
-    "visible": true
-  },
-  {
   "name": "便秘 spredsheet",
   "description": "google spreadsheet",
   "category": "医師用",
