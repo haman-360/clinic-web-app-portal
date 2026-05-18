@@ -20,6 +20,7 @@
   "description": "スタッフに表示する説明",
   "category": "医師用",
   "url": "https://example.com",
+  "profiles": ["doctor", "nurse"],
   "visible": true
 }
 ```
@@ -33,6 +34,33 @@
 - `その他`
 
 `visible` を `false` にすると画面には表示されません。
+
+## 職員別トップページを作る方法
+
+URLに `profile` を付けると、指定した職員・役割向けのリンクだけを表示できます。
+
+```text
+https://example.github.io/clinic-web-app-portal/?profile=doctor
+https://example.github.io/clinic-web-app-portal/?profile=nurse
+https://example.github.io/clinic-web-app-portal/?profile=reception
+https://example.github.io/clinic-web-app-portal/?profile=admin
+```
+
+各リンクをどのトップページに表示するかは、`apps.json` の `profiles` で管理します。
+
+```json
+{
+  "name": "受付用QR作成",
+  "description": "受付スタッフが使うQR作成ページ",
+  "category": "受付用",
+  "url": "https://example.com",
+  "profiles": ["reception", "admin"],
+  "visible": true
+}
+```
+
+`profile` を付けずにアクセスした場合は、表示中の全リンクが表示されます。
+この仕組みは表示を分けるためのものです。重要なリンクは、Google Apps ScriptやGoogle Driveなどリンク先側でもアクセス制限してください。
 
 ## ローカル確認
 

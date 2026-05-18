@@ -1,7 +1,14 @@
 const DEFAULT_CATEGORIES = ["医師用", "看護師用", "受付用", "管理用", "その他"];
+const PROFILE_LABELS = {
+  doctor: "医師用トップページ",
+  nurse: "看護師用トップページ",
+  reception: "受付スタッフ用トップページ",
+  admin: "管理者用トップページ",
+};
 
 const state = {
   apps: [],
+  profile: getProfileFromUrl(),
   activeCategory: "all",
   query: "",
 };
@@ -10,6 +17,7 @@ const appGrid = document.querySelector("#appGrid");
 const categoryTabs = document.querySelector("#categoryTabs");
 const emptyState = document.querySelector("#emptyState");
 const errorState = document.querySelector("#errorState");
+const profileLabel = document.querySelector("#profileLabel");
 const resultSummary = document.querySelector("#resultSummary");
 const searchInput = document.querySelector("#searchInput");
 const template = document.querySelector("#appCardTemplate");
@@ -27,6 +35,7 @@ async function loadApps() {
     }
 
     state.apps = apps.filter((app) => app.visible !== false);
+    renderProfileLabel();
     renderCategoryTabs();
     renderApps();
   } catch (error) {
@@ -36,10 +45,25 @@ async function loadApps() {
   }
 }
 
+function getProfileFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("profile")?.trim() || "";
+}
+
+function renderProfileLabel() {
+  profileLabel.textContent = state.profile
+    ? PROFILE_LABELS[state.profile] || `${state.profile} 用トップページ`
+    : "共通トップページ";
+}
+
 function renderCategoryTabs() {
+  categoryTabs.querySelectorAll("button[data-category]:not([data-category='all'])").forEach((button) => {
+    button.remove();
+  });
+
   const categories = [
     ...DEFAULT_CATEGORIES,
-    ...state.apps.map((app) => app.category).filter(Boolean),
+    ...getProfileApps().map((app) => app.category).filter(Boolean),
   ];
   const uniqueCategories = [...new Set(categories)];
 
@@ -81,14 +105,31 @@ function renderApps() {
   });
 
   const categoryLabel = state.activeCategory === "all" ? "すべて" : state.activeCategory;
-  resultSummary.textContent = `${categoryLabel}: ${filteredApps.length}件`;
+  const profileLabelText = state.profile
+    ? PROFILE_LABELS[state.profile] || `${state.profile} 用`
+    : "共通";
+  resultSummary.textContent = `${profileLabelText} / ${categoryLabel}: ${filteredApps.length}件`;
   emptyState.hidden = filteredApps.length > 0;
+}
+
+function getProfileApps() {
+  if (!state.profile) {
+    return state.apps;
+  }
+
+  return state.apps.filter((app) => {
+    if (!Array.isArray(app.profiles)) {
+      return false;
+    }
+
+    return app.profiles.includes(state.profile);
+  });
 }
 
 function getFilteredApps() {
   const normalizedQuery = normalizeText(state.query);
 
-  return state.apps.filter((app) => {
+  return getProfileApps().filter((app) => {
     const matchesCategory =
       state.activeCategory === "all" || app.category === state.activeCategory;
     const searchableText = normalizeText(
