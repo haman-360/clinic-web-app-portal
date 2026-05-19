@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="院内ポータルに表示するURLを登録・並び替えする管理ツール">
+    <title>Clinic Portal 管理ツール</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <div>
+          <p class="eyebrow">Clinic Portal Admin</p>
+          <h1>リンク管理ツール</h1>
+          <p class="profile-label">管理者用</p>
+        </div>
+        <p class="header-note">登録URLの追加、表示対象、並び順をまとめて調整できます。</p>
+      </div>
+    </header>
+
+    <main class="page-shell admin-shell">
+      <section class="admin-panel" aria-labelledby="addAppTitle">
+        <div class="admin-section-heading">
+          <h2 id="addAppTitle">URL登録</h2>
+          <p>URLを貼り付けて、表示名と対象トップページを選びます。</p>
+        </div>
+
+        <form class="admin-form" id="appForm">
+          <label>
+            <span>URL</span>
+            <input id="urlInput" type="url" placeholder="https://example.com" required>
+          </label>
+
+          <label>
+            <span>表示名</span>
+            <input id="nameInput" type="text" placeholder="例: 受付用QR作成" required>
+          </label>
+
+          <label>
+            <span>説明</span>
+            <input id="descriptionInput" type="text" placeholder="スタッフに表示する説明">
+          </label>
+
+          <label>
+            <span>カテゴリ</span>
+            <select id="categoryInput">
+              <option>医師用</option>
+              <option>看護師用</option>
+              <option>受付用</option>
+              <option>管理用</option>
+              <option>その他</option>
+            </select>
+          </label>
+
+          <fieldset class="profile-options">
+            <legend>表示するトップページ</legend>
+            <label><input type="checkbox" name="profiles" value="doctor"> 医師</label>
+            <label><input type="checkbox" name="profiles" value="nurse"> 看護師</label>
+            <label><input type="checkbox" name="profiles" value="reception"> 受付</label>
+            <label><input type="checkbox" name="profiles" value="admin"> 管理者</label>
+          </fieldset>
+
+          <button class="primary-button" type="submit">追加</button>
+        </form>
+      </section>
+
+      <section class="admin-panel" aria-labelledby="orderTitle">
+        <div class="admin-section-heading">
+          <h2 id="orderTitle">並び替え</h2>
+          <p>上へ・下へボタンでトップページに出る順番を調整できます。</p>
+        </div>
+        <div class="admin-list" id="adminList"></div>
+      </section>
+
+      <section class="admin-panel" aria-labelledby="exportTitle">
+        <div class="admin-section-heading">
+          <h2 id="exportTitle">反映用JSON</h2>
+          <p>下書きをプレビューし、問題なければ apps.json の内容として使います。</p>
+        </div>
+
+        <div class="admin-actions">
+          <button class="secondary-button" id="previewButton" type="button">トップページでプレビュー</button>
+          <button class="secondary-button" id="copyButton" type="button">JSONをコピー</button>
+          <button class="secondary-button" id="downloadButton" type="button">apps.jsonをダウンロード</button>
+          <button class="secondary-button" id="resetDraftButton" type="button">下書きを破棄</button>
+        </div>
+
+        <textarea class="json-output" id="jsonOutput" spellcheck="false" aria-label="apps.json の内容"></textarea>
+        <p class="admin-status" id="adminStatus" role="status"></p>
+      </section>
+    </main>
+
+    <script src="admin.js" defer></script>
+  </body>
+</html>

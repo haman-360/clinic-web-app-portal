@@ -8,6 +8,8 @@
 - `style.css`: レスポンシブデザイン
 - `script.js`: `apps.json` の読み込み、検索、カテゴリ絞り込み
 - `apps.json`: 表示するアプリ一覧
+- `admin.html`: URL登録、並び替え、JSON出力を行う管理ツール
+- `admin.js`: 管理ツールの動作
 - `PROJECT.md`: プロジェクト要件
 
 ## アプリを追加する方法
@@ -61,6 +63,20 @@ https://example.github.io/clinic-web-app-portal/?profile=admin
 
 `profile` を付けずにアクセスした場合は、表示中の全リンクが表示されます。
 この仕組みは表示を分けるためのものです。重要なリンクは、Google Apps ScriptやGoogle Driveなどリンク先側でもアクセス制限してください。
+
+## 管理ツールでURLを追加・並び替えする
+
+`admin.html` を開くと、ブラウザ上でURLの追加、表示対象の選択、並び替えができます。
+
+```text
+https://example.github.io/clinic-web-app-portal/admin.html
+```
+
+管理ツールで作った内容は、ブラウザ内の下書きとして保存されます。
+「トップページでプレビュー」を押すと、下書きの内容で `index.html?draft=1` を確認できます。
+
+GitHub Pagesだけでは、ブラウザから直接 `apps.json` を書き換えることはできません。
+本番に反映する場合は、管理ツールで出力したJSONを `apps.json` の内容として更新してください。
 
 ## ローカル確認
 

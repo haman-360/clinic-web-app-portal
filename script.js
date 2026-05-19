@@ -24,6 +24,15 @@ const template = document.querySelector("#appCardTemplate");
 
 async function loadApps() {
   try {
+    const draftApps = getDraftApps();
+    if (draftApps) {
+      state.apps = draftApps.filter((app) => app.visible !== false);
+      renderProfileLabel();
+      renderCategoryTabs();
+      renderApps();
+      return;
+    }
+
     const response = await fetch("apps.json", { cache: "no-store" });
     if (!response.ok) {
       throw new Error(`apps.json returned ${response.status}`);
@@ -42,6 +51,20 @@ async function loadApps() {
     console.error(error);
     resultSummary.textContent = "";
     errorState.hidden = false;
+  }
+}
+
+function getDraftApps() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("draft") !== "1") {
+    return null;
+  }
+
+  try {
+    const apps = JSON.parse(localStorage.getItem("clinicPortalAppsDraft") || "[]");
+    return Array.isArray(apps) ? apps : null;
+  } catch {
+    return null;
   }
 }
 

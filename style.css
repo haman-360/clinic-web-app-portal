@@ -242,6 +242,200 @@ h1 {
   background: var(--accent-dark);
 }
 
+.admin-shell {
+  display: grid;
+  gap: 18px;
+}
+
+.admin-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  padding: 22px;
+}
+
+.admin-section-heading {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 18px;
+}
+
+.admin-section-heading h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  letter-spacing: 0;
+}
+
+.admin-section-heading p,
+.admin-status {
+  margin: 0;
+  color: var(--muted);
+}
+
+.admin-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.admin-form label,
+.profile-options {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.admin-form input[type="text"],
+.admin-form input[type="url"],
+.admin-form select,
+.json-output {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  padding: 10px 12px;
+  outline: none;
+}
+
+.admin-form input[type="text"],
+.admin-form input[type="url"],
+.admin-form select {
+  min-height: 44px;
+}
+
+.admin-form input:focus,
+.admin-form select:focus,
+.json-output:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(24, 123, 122, 0.16);
+}
+
+.profile-options {
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.profile-options legend {
+  color: var(--muted);
+  font-weight: 800;
+  padding: 0 6px;
+}
+
+.profile-options label {
+  display: inline-flex;
+  align-items: center;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.primary-button,
+.secondary-button {
+  min-height: 42px;
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  padding: 8px 13px;
+}
+
+.primary-button {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.secondary-button {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.primary-button:hover,
+.primary-button:focus {
+  background: var(--accent-dark);
+}
+
+.secondary-button:hover,
+.secondary-button:focus {
+  border-color: var(--accent);
+}
+
+.admin-list {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-list-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.admin-list-details {
+  min-width: 0;
+}
+
+.admin-list-details h3,
+.admin-list-details p {
+  margin: 0;
+}
+
+.admin-list-details h3 {
+  font-size: 1rem;
+  letter-spacing: 0;
+}
+
+.admin-list-details p {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.admin-url {
+  overflow-wrap: anywhere;
+}
+
+.admin-item-actions,
+.admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.compact-button {
+  min-height: 36px;
+  padding: 6px 10px;
+}
+
+.danger-button {
+  color: #9f1d1d;
+}
+
+.json-output {
+  min-height: 260px;
+  margin-top: 14px;
+  resize: vertical;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.admin-status {
+  min-height: 24px;
+  margin-top: 10px;
+}
+
 .empty-state,
 .error-state {
   border: 1px solid var(--line);
@@ -284,5 +478,18 @@ h1 {
 
   .app-grid {
     grid-template-columns: 1fr;
+  }
+
+  .admin-form,
+  .admin-list-item {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-options {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .admin-item-actions {
+    justify-content: flex-start;
   }
 }
