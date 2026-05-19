@@ -27,6 +27,8 @@
         </div>
 
         <form class="admin-form" id="appForm">
+          <input id="editIndexInput" type="hidden" value="">
+
           <label>
             <span>URL</span>
             <input id="urlInput" type="url" placeholder="https://example.com" required>
@@ -61,7 +63,10 @@
             <label><input type="checkbox" name="profiles" value="admin"> 管理者</label>
           </fieldset>
 
-          <button class="primary-button" type="submit">追加</button>
+          <div class="form-actions">
+            <button class="primary-button" id="submitButton" type="submit">追加</button>
+            <button class="secondary-button" id="cancelEditButton" type="button" hidden>編集をキャンセル</button>
+          </div>
         </form>
       </section>
 

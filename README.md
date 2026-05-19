@@ -66,7 +66,7 @@ https://example.github.io/clinic-web-app-portal/?profile=admin
 
 ## 管理ツールでURLを追加・並び替えする
 
-`admin.html` を開くと、ブラウザ上でURLの追加、表示対象の選択、並び替えができます。
+`admin.html` を開くと、ブラウザ上でURLの追加、既存リンクの編集、表示対象の選択、並び替えができます。
 
 ```text
 https://example.github.io/clinic-web-app-portal/admin.html

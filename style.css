@@ -336,6 +336,12 @@ h1 {
   font-size: 0.95rem;
 }
 
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .primary-button,
 .secondary-button {
   min-height: 42px;
@@ -491,5 +497,9 @@ h1 {
 
   .admin-item-actions {
     justify-content: flex-start;
+  }
+
+  .form-actions {
+    grid-column: 1 / -1;
   }
 }

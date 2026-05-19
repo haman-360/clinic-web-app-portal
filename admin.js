@@ -6,15 +6,18 @@ const state = {
 
 const adminList = document.querySelector("#adminList");
 const appForm = document.querySelector("#appForm");
+const cancelEditButton = document.querySelector("#cancelEditButton");
 const categoryInput = document.querySelector("#categoryInput");
 const copyButton = document.querySelector("#copyButton");
 const descriptionInput = document.querySelector("#descriptionInput");
 const downloadButton = document.querySelector("#downloadButton");
+const editIndexInput = document.querySelector("#editIndexInput");
 const jsonOutput = document.querySelector("#jsonOutput");
 const nameInput = document.querySelector("#nameInput");
 const previewButton = document.querySelector("#previewButton");
 const resetDraftButton = document.querySelector("#resetDraftButton");
 const statusText = document.querySelector("#adminStatus");
+const submitButton = document.querySelector("#submitButton");
 const urlInput = document.querySelector("#urlInput");
 
 async function loadApps() {
@@ -77,16 +80,18 @@ function render() {
     const actions = document.createElement("div");
     actions.className = "admin-item-actions";
 
-    const upButton = createActionButton("上へ", () => moveApp(index, -1));
+    const upButton = createActionButton("上へ", () => moveApp(index, -1), "move-up");
     upButton.disabled = index === 0;
 
-    const downButton = createActionButton("下へ", () => moveApp(index, 1));
+    const downButton = createActionButton("下へ", () => moveApp(index, 1), "move-down");
     downButton.disabled = index === state.apps.length - 1;
 
-    const deleteButton = createActionButton("削除", () => deleteApp(index));
+    const editButton = createActionButton("編集", () => editApp(index), "edit");
+
+    const deleteButton = createActionButton("削除", () => deleteApp(index), "delete");
     deleteButton.classList.add("danger-button");
 
-    actions.append(upButton, downButton, deleteButton);
+    actions.append(upButton, downButton, editButton, deleteButton);
     item.append(details, actions);
     adminList.append(item);
   });
@@ -95,13 +100,28 @@ function render() {
   localStorage.setItem(STORAGE_KEY, jsonOutput.value);
 }
 
-function createActionButton(label, onClick) {
+function createActionButton(label, onClick, action) {
   const button = document.createElement("button");
   button.className = "secondary-button compact-button";
   button.type = "button";
+  button.dataset.action = action;
   button.textContent = label;
   button.addEventListener("click", onClick);
   return button;
+}
+
+function setSelectedProfiles(profiles) {
+  appForm.querySelectorAll("input[name='profiles']").forEach((input) => {
+    input.checked = profiles.includes(input.value);
+  });
+}
+
+function resetFormMode() {
+  appForm.reset();
+  editIndexInput.value = "";
+  categoryInput.value = "医師用";
+  submitButton.textContent = "追加";
+  cancelEditButton.hidden = true;
 }
 
 function moveApp(index, direction) {
@@ -114,8 +134,23 @@ function moveApp(index, direction) {
   setStatus("並び順を更新しました。");
 }
 
+function editApp(index) {
+  const app = state.apps[index];
+  editIndexInput.value = String(index);
+  urlInput.value = app.url || "";
+  nameInput.value = app.name || "";
+  descriptionInput.value = app.description || "";
+  categoryInput.value = app.category || "その他";
+  setSelectedProfiles(Array.isArray(app.profiles) ? app.profiles : []);
+  submitButton.textContent = "更新";
+  cancelEditButton.hidden = false;
+  urlInput.focus();
+  setStatus("選択したリンクを編集中です。");
+}
+
 function deleteApp(index) {
   state.apps.splice(index, 1);
+  resetFormMode();
   render();
   setStatus("リンクを削除しました。");
 }
@@ -160,19 +195,32 @@ appForm.addEventListener("submit", (event) => {
     return;
   }
 
-  state.apps.push({
+  const app = {
     name: nameInput.value.trim(),
     description: descriptionInput.value.trim() || "説明は未設定です。",
     category: categoryInput.value,
     url: urlInput.value.trim(),
     profiles,
     visible: true,
-  });
+  };
 
-  appForm.reset();
-  categoryInput.value = "医師用";
+  const editIndex = Number(editIndexInput.value);
+  const isEditing = Number.isInteger(editIndex) && editIndex >= 0 && editIndex < state.apps.length;
+
+  if (isEditing) {
+    state.apps[editIndex] = app;
+  } else {
+    state.apps.push(app);
+  }
+
+  resetFormMode();
   render();
-  setStatus("リンクを追加しました。");
+  setStatus(isEditing ? "リンクを更新しました。" : "リンクを追加しました。");
+});
+
+cancelEditButton.addEventListener("click", () => {
+  resetFormMode();
+  setStatus("編集をキャンセルしました。");
 });
 
 copyButton.addEventListener("click", async () => {
