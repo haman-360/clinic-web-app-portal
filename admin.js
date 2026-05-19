@@ -78,6 +78,11 @@ async function loadAppsFromJson() {
 }
 
 async function loadAppsFromGas() {
+  state.apps = await fetchAppsFromGas();
+  render();
+}
+
+async function fetchAppsFromGas() {
   const endpoint = gasEndpointInput.value.trim();
   if (!endpoint) {
     throw new Error("ウェブアプリURLを入力してください。");
@@ -88,8 +93,7 @@ async function loadAppsFromGas() {
     throw new Error(payload.error || "GASの応答形式が正しくありません。");
   }
 
-  state.apps = payload.apps;
-  render();
+  return payload.apps;
 }
 
 async function saveAppsToGas() {
@@ -113,6 +117,35 @@ function wait(milliseconds) {
   return new Promise((resolve) => {
     window.setTimeout(resolve, milliseconds);
   });
+}
+
+async function confirmSavedApps(expectedApps) {
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    await wait(attempt === 0 ? 1500 : 2000);
+    const savedApps = await fetchAppsFromGas();
+    if (isExpectedSaveResult(savedApps, expectedApps)) {
+      return savedApps;
+    }
+  }
+
+  return null;
+}
+
+function isExpectedSaveResult(savedApps, expectedApps) {
+  if (savedApps.length !== expectedApps.length) {
+    return false;
+  }
+
+  if (expectedApps.length === 0) {
+    return true;
+  }
+
+  const expectedLastApp = expectedApps[expectedApps.length - 1];
+  const savedLastApp = savedApps[savedApps.length - 1];
+  return (
+    savedLastApp.name === expectedLastApp.name &&
+    savedLastApp.url === expectedLastApp.url
+  );
 }
 
 function loadAppsScriptPayload(endpoint) {
@@ -334,10 +367,20 @@ loadFromGasButton.addEventListener("click", async () => {
 saveToGasButton.addEventListener("click", async () => {
   try {
     saveGasSettings();
+    const submittedApps = JSON.parse(JSON.stringify(state.apps));
     await saveAppsToGas();
     setStatus("GASへ保存リクエストを送信しました。反映を確認しています...");
-    await wait(1500);
-    await loadAppsFromGas();
+    const savedApps = await confirmSavedApps(submittedApps);
+
+    if (!savedApps) {
+      state.apps = submittedApps;
+      render();
+      setStatus("GASの反映確認がまだ取れません。下書きは保持しています。少し待ってから「GASへ保存」をもう一度押してください。");
+      return;
+    }
+
+    state.apps = savedApps;
+    render();
     setStatus(`GASへ保存し、${state.apps.length}件を確認しました。`);
   } catch (error) {
     console.error(error);
