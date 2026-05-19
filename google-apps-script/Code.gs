@@ -145,12 +145,21 @@ function getAppsSheet() {
 
 function ensureHeaders(sheet) {
   const currentHeaders = sheet.getRange(1, 1, 1, HEADERS.length).getValues()[0];
-  const needsHeaders = HEADERS.some((header, index) => currentHeaders[index] !== header);
-
-  if (needsHeaders) {
-    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+  const hasHeaders = HEADERS.every((header, index) => currentHeaders[index] === header);
+  if (hasHeaders) {
     sheet.setFrozenRows(1);
+    return;
   }
+
+  const firstRowIsEmpty = currentHeaders.every((value) => value === "");
+  if (firstRowIsEmpty) {
+    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+  } else {
+    sheet.insertRowBefore(1);
+    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+  }
+
+  sheet.setFrozenRows(1);
 }
 
 function jsonResponse(payload) {

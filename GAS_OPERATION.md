@@ -93,6 +93,7 @@ https://example.github.io/clinic-web-app-portal/?profile=admin
 2. `拡張機能` → `Apps Script` を開きます。
 3. `google-apps-script/Code.gs` の内容を貼り付けます。
 4. `setupPortalSheet()` を1回実行します。
+   - 1行目に既存データがある場合は、上にヘッダー行を挿入してデータを残します。
 5. スクリプトプロパティに `ADMIN_TOKEN` を保存します。
 6. `checkAdminTokenSetting()` を実行し、設定できているか確認します。
 7. Webアプリとしてデプロイします。
