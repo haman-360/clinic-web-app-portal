@@ -136,16 +136,21 @@ function isExpectedSaveResult(savedApps, expectedApps) {
     return false;
   }
 
-  if (expectedApps.length === 0) {
-    return true;
-  }
+  return savedApps.every((savedApp, index) => {
+    const expectedApp = expectedApps[index];
+    return JSON.stringify(normalizeApp(savedApp)) === JSON.stringify(normalizeApp(expectedApp));
+  });
+}
 
-  const expectedLastApp = expectedApps[expectedApps.length - 1];
-  const savedLastApp = savedApps[savedApps.length - 1];
-  return (
-    savedLastApp.name === expectedLastApp.name &&
-    savedLastApp.url === expectedLastApp.url
-  );
+function normalizeApp(app) {
+  return {
+    name: app.name || "",
+    description: app.description || "",
+    category: app.category || "その他",
+    url: app.url || "",
+    profiles: Array.isArray(app.profiles) ? app.profiles : [],
+    visible: app.visible !== false,
+  };
 }
 
 function loadAppsScriptPayload(endpoint) {
@@ -340,7 +345,7 @@ appForm.addEventListener("submit", (event) => {
 
   resetFormMode();
   render();
-  setStatus(isEditing ? "リンクを更新しました。" : "リンクを追加しました。");
+  setStatus(isEditing ? "リンクを更新しました。反映するには「GASへ保存」を押してください。" : "リンクを追加しました。反映するには「GASへ保存」を押してください。");
 });
 
 cancelEditButton.addEventListener("click", () => {
