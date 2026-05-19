@@ -374,6 +374,12 @@ h1 {
   border-color: var(--accent);
 }
 
+.primary-button:disabled,
+.secondary-button:disabled {
+  cursor: wait;
+  opacity: 0.68;
+}
+
 .admin-list {
   display: grid;
   gap: 10px;

@@ -302,6 +302,19 @@ function setStatus(message) {
   statusText.textContent = message;
 }
 
+function setButtonLoading(button, isLoading, loadingText) {
+  if (isLoading) {
+    button.dataset.defaultText = button.textContent;
+    button.textContent = loadingText;
+    button.disabled = true;
+    return;
+  }
+
+  button.textContent = button.dataset.defaultText || button.textContent;
+  button.disabled = false;
+  delete button.dataset.defaultText;
+}
+
 urlInput.addEventListener("paste", () => {
   window.setTimeout(() => {
     if (!nameInput.value.trim()) {
@@ -360,17 +373,22 @@ saveGasSettingsButton.addEventListener("click", () => {
 
 loadFromGasButton.addEventListener("click", async () => {
   try {
+    setButtonLoading(loadFromGasButton, true, "読み込み中...");
     saveGasSettings();
+    setStatus("GASから読み込んでいます...");
     await loadAppsFromGas();
     setStatus("GASから読み込みました。");
   } catch (error) {
     console.error(error);
     setStatus(error.message);
+  } finally {
+    setButtonLoading(loadFromGasButton, false);
   }
 });
 
 saveToGasButton.addEventListener("click", async () => {
   try {
+    setButtonLoading(saveToGasButton, true, "保存中...");
     saveGasSettings();
     const submittedApps = JSON.parse(JSON.stringify(state.apps));
     await saveAppsToGas();
@@ -390,6 +408,8 @@ saveToGasButton.addEventListener("click", async () => {
   } catch (error) {
     console.error(error);
     setStatus(error.message);
+  } finally {
+    setButtonLoading(saveToGasButton, false);
   }
 });
 
