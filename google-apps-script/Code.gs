@@ -1,5 +1,5 @@
 const SHEET_NAME = "apps";
-const HEADERS = ["name", "description", "category", "url", "profiles", "visible"];
+const HEADERS = ["name", "description", "category", "url", "profiles", "tags", "visible"];
 const ADMIN_TOKEN_KEY = "ADMIN_TOKEN";
 const ADMIN_TOKEN_LEGACY_KEY = "ADMIN-TOKEN";
 
@@ -96,7 +96,11 @@ function readApps() {
         .split(",")
         .map((profile) => profile.trim())
         .filter(Boolean),
-      visible: row[5] === "" ? true : row[5] === true || String(row[5]).toLowerCase() === "true",
+      tags: String(row[5] || "")
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean),
+      visible: row[6] === "" ? true : row[6] === true || String(row[6]).toLowerCase() === "true",
     }));
 }
 
@@ -118,6 +122,7 @@ function writeApps(apps) {
     app.category || "その他",
     app.url || "",
     Array.isArray(app.profiles) ? app.profiles.join(",") : "",
+    Array.isArray(app.tags) ? app.tags.join(",") : "",
     app.visible !== false,
   ]);
 
@@ -147,6 +152,15 @@ function ensureHeaders(sheet) {
   const currentHeaders = sheet.getRange(1, 1, 1, HEADERS.length).getValues()[0];
   const hasHeaders = HEADERS.every((header, index) => currentHeaders[index] === header);
   if (hasHeaders) {
+    sheet.setFrozenRows(1);
+    return;
+  }
+
+  const legacyHeaders = ["name", "description", "category", "url", "profiles", "visible"];
+  const hasLegacyHeaders = legacyHeaders.every((header, index) => currentHeaders[index] === header);
+  if (hasLegacyHeaders) {
+    sheet.insertColumnBefore(6);
+    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
     sheet.setFrozenRows(1);
     return;
   }

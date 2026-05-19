@@ -27,6 +27,7 @@ const saveGasSettingsButton = document.querySelector("#saveGasSettingsButton");
 const saveToGasButton = document.querySelector("#saveToGasButton");
 const statusText = document.querySelector("#adminStatus");
 const submitButton = document.querySelector("#submitButton");
+const tagsInput = document.querySelector("#tagsInput");
 const urlInput = document.querySelector("#urlInput");
 
 async function loadApps() {
@@ -153,6 +154,7 @@ function normalizeApp(app) {
     category: app.category || "その他",
     url: app.url || "",
     profiles: Array.isArray(app.profiles) ? app.profiles : [],
+    tags: normalizeTags(app.tags),
     visible: app.visible !== false,
   };
 }
@@ -203,7 +205,9 @@ function render() {
     title.textContent = app.name || "名称未設定";
 
     const meta = document.createElement("p");
-    meta.textContent = `${app.category || "その他"} / ${(app.profiles || []).join(", ") || "共通のみ"}`;
+    const tags = normalizeTags(app.tags);
+    const tagText = tags.length > 0 ? ` / タグ: ${tags.join(", ")}` : "";
+    meta.textContent = `${app.category || "その他"} / ${(app.profiles || []).join(", ") || "共通のみ"}${tagText}`;
 
     const url = document.createElement("p");
     url.className = "admin-url";
@@ -254,6 +258,7 @@ function resetFormMode() {
   appForm.reset();
   editIndexInput.value = "";
   categoryInput.value = "医師用";
+  tagsInput.value = "";
   addAppTitle.textContent = "URL登録";
   appFormHelp.textContent = "URLを貼り付けて、表示名と対象トップページを選びます。";
   submitButton.textContent = "追加";
@@ -277,6 +282,7 @@ function editApp(index) {
   nameInput.value = app.name || "";
   descriptionInput.value = app.description || "";
   categoryInput.value = app.category || "その他";
+  tagsInput.value = normalizeTags(app.tags).join(", ");
   setSelectedProfiles(Array.isArray(app.profiles) ? app.profiles : []);
   addAppTitle.textContent = "リンク編集中";
   appFormHelp.textContent = "既存リンクを修正しています。新しく追加したい場合は「編集をキャンセル」を押してください。";
@@ -295,6 +301,18 @@ function deleteApp(index) {
 
 function getSelectedProfiles() {
   return [...appForm.querySelectorAll("input[name='profiles']:checked")].map((input) => input.value);
+}
+
+function parseTags(value) {
+  return normalizeTags(value.split(/[,、\n]/));
+}
+
+function normalizeTags(tags) {
+  if (!Array.isArray(tags)) {
+    return [];
+  }
+
+  return [...new Set(tags.map((tag) => tag.toString().trim()).filter(Boolean))];
 }
 
 function getNameFromUrl(value) {
@@ -352,6 +370,7 @@ appForm.addEventListener("submit", (event) => {
     category: categoryInput.value,
     url: urlInput.value.trim(),
     profiles,
+    tags: parseTags(tagsInput.value),
     visible: true,
   };
 

@@ -5,6 +5,7 @@
     "category": "医師用",
     "url": "https://script.google.com/macros/s/AKfycbyQk3cCfCBlCru7REOI9hvVB_qZ7Y3o7z8HHNiKJacWh9bCfM_DfgsKYe1DCSFJoggVkg/exec",
     "profiles": ["doctor"],
+    "tags": ["喘息"],
     "visible": true
   },
   {
@@ -13,6 +14,7 @@
     "category": "医師用",
     "url": "https://docs.google.com/spreadsheets/d/1yoghnYq2JGSw7VOX1TaKfqU_sFCGeGA7kKUgRQiZf1o/edit?gid=0#gid=0",
     "profiles": ["doctor"],
+    "tags": ["喘息"],
     "visible": true
   },
   {
@@ -21,6 +23,7 @@
     "category": "受付用",
     "url": "https://script.google.com/macros/s/AKfycbyQk3cCfCBlCru7REOI9hvVB_qZ7Y3o7z8HHNiKJacWh9bCfM_DfgsKYe1DCSFJoggVkg/exec",
     "profiles": ["reception"],
+    "tags": ["喘息"],
     "visible": true
   },
   {
@@ -29,6 +32,7 @@
     "category": "管理用",
     "url": "https://haman-360.github.io/constipation/constipation-ai-mvp/visit-link.html",
     "profiles": ["admin", "reception"],
+    "tags": ["便秘"],
     "visible": true
   },
   {
@@ -37,6 +41,7 @@
     "category": "管理用",
     "url": "https://haman-360.github.io/constipation/constipation-ai-mvp/history-link.html",
     "profiles": ["admin", "doctor"],
+    "tags": ["便秘"],
     "visible": true
   },
   {
@@ -45,6 +50,7 @@
   "category": "医師用",
   "url": "https://docs.google.com/spreadsheets/d/1DhLgt58Najnhie3C5RtwgcQwZVwjMykGrRLhfRTGurM/edit?gid=0#gid=0",
   "profiles": ["doctor"],
+  "tags": ["便秘"],
   "visible": true
   },
   {
@@ -53,6 +59,7 @@
     "category": "医師用",
     "url": "https://haman-360.github.io/atopic-calculator/atopy_v8.html",
     "profiles": ["doctor"],
+    "tags": ["アトピー"],
     "visible": true
   },
   {
@@ -61,6 +68,7 @@
   "category": "医師用",
   "url": "https://haman-360.github.io/atopic-calculator/atopic_calculator.html",
   "profiles": ["doctor", "nurse"],
+  "tags": ["アトピー"],
   "visible": true
 },
   {
@@ -69,6 +77,7 @@
     "category": "医師用",
     "url": "https://script.google.com/macros/s/AKfycby5krfCy8W62qZzgBule24N37qKkzfp8GLLI8EQ35pE--TKre-RLvpZk4Ykpqk5JoA/exec",
     "profiles": ["doctor", "admin"],
+    "tags": [],
     "visible": true
   },
   {
@@ -77,6 +86,7 @@
     "category": "医師用",
     "url": "https://haman-360.github.io/password-maker/",
     "profiles": ["doctor", "admin"],
+    "tags": [],
     "visible": true
   }
   

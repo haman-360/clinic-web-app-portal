@@ -25,6 +25,7 @@
   "category": "医師用",
   "url": "https://example.com",
   "profiles": ["doctor", "nurse"],
+  "tags": ["便秘", "喘息"],
   "visible": true
 }
 ```
@@ -38,6 +39,9 @@
 - `その他`
 
 `visible` を `false` にすると画面には表示されません。
+
+`tags` には、疾患名や運用グループなどの絞り込み用タグを入れます。
+たとえば `便秘`、`喘息`、`アトピー` を設定すると、トップページ上部のタグボタンから該当URLだけを表示できます。
 
 ## 職員別トップページを作る方法
 
@@ -59,6 +63,7 @@ https://example.github.io/clinic-web-app-portal/?profile=admin
   "category": "受付用",
   "url": "https://example.com",
   "profiles": ["reception", "admin"],
+  "tags": ["便秘"],
   "visible": true
 }
 ```
@@ -68,7 +73,7 @@ https://example.github.io/clinic-web-app-portal/?profile=admin
 
 ## 管理ツールでURLを追加・並び替えする
 
-`admin.html` を開くと、ブラウザ上でURLの追加、既存リンクの編集、表示対象の選択、並び替えができます。
+`admin.html` を開くと、ブラウザ上でURLの追加、既存リンクの編集、表示対象の選択、タグ付け、並び替えができます。
 
 ```text
 https://example.github.io/clinic-web-app-portal/admin.html

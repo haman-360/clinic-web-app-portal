@@ -11,6 +11,7 @@ const state = {
   apps: [],
   profile: getProfileFromUrl(),
   activeCategory: "all",
+  activeTag: "all",
   query: "",
 };
 
@@ -21,6 +22,7 @@ const errorState = document.querySelector("#errorState");
 const profileLabel = document.querySelector("#profileLabel");
 const resultSummary = document.querySelector("#resultSummary");
 const searchInput = document.querySelector("#searchInput");
+const tagTabs = document.querySelector("#tagTabs");
 const template = document.querySelector("#appCardTemplate");
 
 async function loadApps() {
@@ -52,6 +54,7 @@ function setApps(apps) {
   state.apps = apps.filter((app) => app.visible !== false);
   renderProfileLabel();
   renderCategoryTabs();
+  renderTagTabs();
   renderApps();
 }
 
@@ -188,6 +191,35 @@ function renderCategoryTabs() {
   });
 }
 
+function renderTagTabs() {
+  tagTabs.querySelectorAll("button[data-tag]:not([data-tag='all'])").forEach((button) => {
+    button.remove();
+  });
+
+  const tags = getProfileApps().flatMap((app) => getAppTags(app));
+  const uniqueTags = [...new Set(tags)];
+
+  if (state.activeTag !== "all" && !uniqueTags.includes(state.activeTag)) {
+    state.activeTag = "all";
+  }
+
+  const allButton = tagTabs.querySelector("button[data-tag='all']");
+  allButton.classList.toggle("is-active", state.activeTag === "all");
+  allButton.setAttribute("aria-pressed", String(state.activeTag === "all"));
+
+  uniqueTags.forEach((tag) => {
+    const button = document.createElement("button");
+    const isActive = tag === state.activeTag;
+    button.className = "tag-button";
+    button.type = "button";
+    button.dataset.tag = tag;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+    button.textContent = tag;
+    tagTabs.append(button);
+  });
+}
+
 function renderApps() {
   const filteredApps = getFilteredApps();
   appGrid.replaceChildren();
@@ -197,11 +229,13 @@ function renderApps() {
     const categoryBadge = card.querySelector(".category-badge");
     const title = card.querySelector("h2");
     const description = card.querySelector(".description");
+    const tags = card.querySelector(".app-tags");
     const link = card.querySelector(".launch-button");
 
     categoryBadge.textContent = app.category || "その他";
     title.textContent = app.name || "名称未設定";
     description.textContent = app.description || "説明は未設定です。";
+    renderAppTags(tags, getAppTags(app));
     link.href = app.url || "#";
     link.setAttribute("aria-label", `${title.textContent}を起動`);
 
@@ -215,11 +249,24 @@ function renderApps() {
   });
 
   const categoryLabel = state.activeCategory === "all" ? "すべて" : state.activeCategory;
+  const tagLabel = state.activeTag === "all" ? "タグすべて" : `タグ: ${state.activeTag}`;
   const profileLabelText = state.profile
     ? PROFILE_LABELS[state.profile] || `${state.profile} 用`
     : "共通";
-  resultSummary.textContent = `${profileLabelText} / ${categoryLabel}: ${filteredApps.length}件`;
+  resultSummary.textContent = `${profileLabelText} / ${categoryLabel} / ${tagLabel}: ${filteredApps.length}件`;
   emptyState.hidden = filteredApps.length > 0;
+}
+
+function renderAppTags(container, tags) {
+  container.replaceChildren();
+  container.hidden = tags.length === 0;
+
+  tags.forEach((tag) => {
+    const tagChip = document.createElement("span");
+    tagChip.className = "app-tag";
+    tagChip.textContent = tag;
+    container.append(tagChip);
+  });
 }
 
 function getProfileApps() {
@@ -242,13 +289,21 @@ function getFilteredApps() {
   return getProfileApps().filter((app) => {
     const matchesCategory =
       state.activeCategory === "all" || app.category === state.activeCategory;
+    const appTags = getAppTags(app);
+    const matchesTag = state.activeTag === "all" || appTags.includes(state.activeTag);
     const searchableText = normalizeText(
-      `${app.name || ""} ${app.description || ""} ${app.category || ""}`,
+      `${app.name || ""} ${app.description || ""} ${app.category || ""} ${appTags.join(" ")}`,
     );
     const matchesQuery = searchableText.includes(normalizedQuery);
 
-    return matchesCategory && matchesQuery;
+    return matchesCategory && matchesTag && matchesQuery;
   });
+}
+
+function getAppTags(app) {
+  return Array.isArray(app.tags)
+    ? app.tags.map((tag) => tag.toString().trim()).filter(Boolean)
+    : [];
 }
 
 function normalizeText(value) {
@@ -262,6 +317,21 @@ categoryTabs.addEventListener("click", (event) => {
   state.activeCategory = button.dataset.category;
 
   categoryTabs.querySelectorAll(".tab-button").forEach((tab) => {
+    const isActive = tab === button;
+    tab.classList.toggle("is-active", isActive);
+    tab.setAttribute("aria-pressed", String(isActive));
+  });
+
+  renderApps();
+});
+
+tagTabs.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-tag]");
+  if (!button) return;
+
+  state.activeTag = button.dataset.tag;
+
+  tagTabs.querySelectorAll(".tag-button").forEach((tab) => {
     const isActive = tab === button;
     tab.classList.toggle("is-active", isActive);
     tab.setAttribute("aria-pressed", String(isActive));

@@ -127,7 +127,23 @@ h1 {
   justify-content: flex-end;
 }
 
-.tab-button {
+.filter-group {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.tag-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tab-button,
+.tag-button {
   min-height: 40px;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -139,11 +155,13 @@ h1 {
   padding: 8px 13px;
 }
 
-.tab-button:hover {
+.tab-button:hover,
+.tag-button:hover {
   border-color: var(--accent);
 }
 
-.tab-button.is-active {
+.tab-button.is-active,
+.tag-button.is-active {
   border-color: var(--accent);
   background: var(--accent);
   color: #ffffff;
@@ -224,6 +242,26 @@ h1 {
   font-size: 0.95rem;
 }
 
+.app-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.app-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 25px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #f7faf9;
+  color: var(--accent-dark);
+  font-size: 0.76rem;
+  font-weight: 800;
+  padding: 3px 9px;
+}
+
 .launch-button {
   display: flex;
   align-items: center;
@@ -294,6 +332,7 @@ h1 {
 
 .admin-form input[type="text"],
 .admin-form input[type="url"],
+.admin-form input[type="password"],
 .admin-form select,
 .json-output {
   width: 100%;
@@ -308,6 +347,7 @@ h1 {
 
 .admin-form input[type="text"],
 .admin-form input[type="url"],
+.admin-form input[type="password"],
 .admin-form select {
   min-height: 44px;
 }
@@ -488,7 +528,8 @@ h1 {
     justify-content: flex-start;
   }
 
-  .tab-button {
+  .tab-button,
+  .tag-button {
     flex: 1 1 auto;
   }
 

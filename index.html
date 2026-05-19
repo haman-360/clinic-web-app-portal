@@ -29,6 +29,13 @@
         <div class="category-tabs" id="categoryTabs" role="tablist" aria-label="カテゴリ">
           <button class="tab-button is-active" type="button" data-category="all" aria-pressed="true">すべて</button>
         </div>
+
+        <div class="filter-group tag-filter">
+          <span>タグ</span>
+          <div class="tag-tabs" id="tagTabs" role="tablist" aria-label="タグ">
+            <button class="tag-button is-active" type="button" data-tag="all" aria-pressed="true">すべて</button>
+          </div>
+        </div>
       </section>
 
       <section class="summary-row" aria-live="polite">
@@ -57,6 +64,7 @@
           </div>
           <h2></h2>
           <p class="description"></p>
+          <div class="app-tags" aria-label="タグ"></div>
         </div>
         <a class="launch-button" target="_blank" rel="noopener noreferrer">起動</a>
       </article>
