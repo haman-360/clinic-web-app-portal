@@ -92,6 +92,8 @@ Google Apps Scriptを使うと、管理画面からスプレッドシートへ�
 5. `portal-config.js` の `appsScriptEndpoint` にWebアプリURLを設定します。
 6. `admin.html` の「Google Apps Script連携」からURLと管理用トークンを保存し、「GASへ保存」を押します。
 
+GAS連携後の日常運用は `GAS_OPERATION.md` を参照してください。
+
 ## ローカル確認
 
 `fetch` で `apps.json` を読み込むため、直接HTMLファイルを開くのではなく簡易サーバーで確認します。

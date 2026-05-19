@@ -1,0 +1,144 @@
+# Google Apps Script運用ガイド
+
+このガイドは、Google Apps Script連携を設定した後に、日常的にURLを追加・編集・反映するための手順です。
+
+## 画面の役割
+
+- `index.html`: 職員が使うトップページです。
+- `admin.html`: 管理者がリンクを追加・編集・並び替えする画面です。
+- Googleスプレッドシート: 本番のリンク一覧を保存する場所です。
+- Google Apps Script: `admin.html` とスプレッドシートをつなぐ窓口です。
+
+## 日常の更新手順
+
+1. 管理画面を開きます。
+
+```text
+https://example.github.io/clinic-web-app-portal/admin.html
+```
+
+2. 「Google Apps Script連携」に次を入力します。
+   - ウェブアプリURL: Apps ScriptのWebアプリURL
+   - 管理用トークン: スクリプトプロパティ `ADMIN_TOKEN` に保存した値
+
+3. 「GASから読み込み」を押します。
+   - スプレッドシート上の本番データが管理画面に読み込まれます。
+
+4. URLを追加・編集・削除・並び替えします。
+
+5. 「トップページでプレビュー」を押して、見え方を確認します。
+
+6. 問題なければ「GASへ保存」を押します。
+   - 保存後、自動でGASから読み直します。
+   - `GASへ保存し、10件を確認しました。` のように表示されれば反映完了です。
+
+## URLを追加する
+
+1. `URL` に登録したいURLを貼り付けます。
+2. `表示名` を入力します。
+3. `説明` を入力します。
+4. `カテゴリ` を選びます。
+5. `表示するトップページ` を選びます。
+6. 「追加」を押します。
+
+表示対象の例:
+
+- 医師だけに出す: `医師`
+- 受付と管理者に出す: `受付` と `管理者`
+- 看護師にも医師にも出す: `医師` と `看護師`
+
+## 既存URLを編集する
+
+1. 一覧から対象リンクの「編集」を押します。
+2. フォームに内容が読み込まれます。
+3. URL、表示名、説明、カテゴリ、表示対象を修正します。
+4. 「更新」を押します。
+5. 必要に応じてプレビューし、「GASへ保存」を押します。
+
+## 並び替える
+
+一覧の「上へ」「下へ」で順番を変えます。
+
+並び順は職員用トップページにも反映されます。
+
+## 職員に配るURL
+
+職員には `profile` 付きのURLを渡します。
+
+```text
+医師用:
+https://example.github.io/clinic-web-app-portal/?profile=doctor
+
+看護師用:
+https://example.github.io/clinic-web-app-portal/?profile=nurse
+
+受付用:
+https://example.github.io/clinic-web-app-portal/?profile=reception
+
+管理者用:
+https://example.github.io/clinic-web-app-portal/?profile=admin
+```
+
+`profile` なしで開くと、表示可能なリンク全体が表示されます。
+
+## Apps Script側の初期設定
+
+初回のみ必要です。
+
+1. Googleスプレッドシートを作成します。
+2. `拡張機能` → `Apps Script` を開きます。
+3. `google-apps-script/Code.gs` の内容を貼り付けます。
+4. `setupPortalSheet()` を1回実行します。
+5. スクリプトプロパティに `ADMIN_TOKEN` を保存します。
+6. `checkAdminTokenSetting()` を実行し、設定できているか確認します。
+7. Webアプリとしてデプロイします。
+
+デプロイ設定:
+
+```text
+実行ユーザー: 自分
+アクセスできるユーザー: 全員
+```
+
+デプロイ後に発行されたWebアプリURLを、`portal-config.js` の `appsScriptEndpoint` に入れます。
+
+## よくあるトラブル
+
+### `setAdminToken` で `token is required` が出る
+
+Apps Scriptエディタから `setAdminToken` を直接実行すると、引数なしで実行されます。
+
+スクリプトプロパティに手入力で `ADMIN_TOKEN` を保存している場合、`setAdminToken` は実行不要です。
+確認したい場合は `checkAdminTokenSetting()` を実行します。
+
+### GASから読み込めない
+
+Webアプリのデプロイ設定を確認します。
+
+```text
+実行ユーザー: 自分
+アクセスできるユーザー: 全員
+```
+
+`自分のみ` になっていると、Googleログイン画面へリダイレクトされ、トップページから読み込めません。
+
+### トップページが古い内容に見える
+
+次を確認します。
+
+1. 管理画面で「GASへ保存」を押したか
+2. 保存後に `GASへ保存し、○件を確認しました。` と表示されたか
+3. `portal-config.js` の `appsScriptEndpoint` が最新のWebアプリURLか
+4. ブラウザを再読み込みしたか
+
+### トップページが真っ白にならない理由
+
+GASが読めない場合、トップページは自動で `apps.json` に戻ります。
+そのため、GASの設定中でも職員向け画面が完全に止まらないようになっています。
+
+## セキュリティ上の注意
+
+この仕組みは「表示するリンクを分ける」ためのものです。
+本当にアクセス制限が必要な情報は、リンク先のGoogle Apps Script、Google Drive、スプレッドシートなどでも権限設定してください。
+
+管理用トークンは職員に共有しないでください。
