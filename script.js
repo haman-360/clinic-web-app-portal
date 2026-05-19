@@ -33,8 +33,8 @@ async function loadApps() {
       return;
     }
 
-    const configuredApps = await loadConfiguredApps();
-    if (configuredApps) {
+    const configuredApps = await tryLoadConfiguredApps();
+    if (configuredApps.length > 0) {
       state.apps = configuredApps.filter((app) => app.visible !== false);
       renderProfileLabel();
       renderCategoryTabs();
@@ -63,6 +63,15 @@ async function loadApps() {
   }
 }
 
+async function tryLoadConfiguredApps() {
+  try {
+    return (await loadConfiguredApps()) || [];
+  } catch (error) {
+    console.warn("Apps Scriptから読み込めなかったため apps.json にフォールバックします。", error);
+    return [];
+  }
+}
+
 async function loadConfiguredApps() {
   const endpoint = window.CLINIC_PORTAL_CONFIG?.appsScriptEndpoint?.trim();
   if (!endpoint) {
@@ -81,17 +90,24 @@ function loadAppsScriptPayload(endpoint) {
   return new Promise((resolve, reject) => {
     const callbackName = `clinicPortalCallback${Date.now()}`;
     const script = document.createElement("script");
+    const timeoutId = window.setTimeout(() => {
+      delete window[callbackName];
+      script.remove();
+      reject(new Error("Apps Scriptの応答がタイムアウトしました。"));
+    }, 5000);
     const url = new URL(endpoint);
     url.searchParams.set("callback", callbackName);
     url.searchParams.set("cache", String(Date.now()));
 
     window[callbackName] = (payload) => {
+      window.clearTimeout(timeoutId);
       delete window[callbackName];
       script.remove();
       resolve(payload);
     };
 
     script.onerror = () => {
+      window.clearTimeout(timeoutId);
       delete window[callbackName];
       script.remove();
       reject(new Error("Apps Scriptを読み込めませんでした。"));

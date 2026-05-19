@@ -1,5 +1,7 @@
 const SHEET_NAME = "apps";
 const HEADERS = ["name", "description", "category", "url", "profiles", "visible"];
+const ADMIN_TOKEN_KEY = "ADMIN_TOKEN";
+const ADMIN_TOKEN_LEGACY_KEY = "ADMIN-TOKEN";
 
 function doGet(event) {
   try {
@@ -41,11 +43,36 @@ function setupPortalSheet() {
 }
 
 function setAdminToken(token) {
+  const properties = PropertiesService.getScriptProperties();
   if (!token) {
-    throw new Error("token is required");
+    const existingToken =
+      properties.getProperty(ADMIN_TOKEN_KEY) ||
+      properties.getProperty(ADMIN_TOKEN_LEGACY_KEY);
+    if (existingToken) {
+      Logger.log("ADMIN_TOKEN is already set in Script Properties.");
+      return "ADMIN_TOKEN is already set in Script Properties.";
+    }
+
+    throw new Error('token is required. Set ADMIN_TOKEN in Script Properties, or call setAdminToken("your-token") from another function.');
   }
 
-  PropertiesService.getScriptProperties().setProperty("ADMIN_TOKEN", token);
+  properties.setProperty(ADMIN_TOKEN_KEY, token);
+  Logger.log("ADMIN_TOKEN was saved.");
+  return "ADMIN_TOKEN was saved.";
+}
+
+function checkAdminTokenSetting() {
+  const properties = PropertiesService.getScriptProperties();
+  const existingToken =
+    properties.getProperty(ADMIN_TOKEN_KEY) ||
+    properties.getProperty(ADMIN_TOKEN_LEGACY_KEY);
+
+  if (!existingToken) {
+    throw new Error("ADMIN_TOKEN is not set in Script Properties.");
+  }
+
+  Logger.log("ADMIN_TOKEN is set.");
+  return "ADMIN_TOKEN is set.";
 }
 
 function readApps() {
@@ -98,7 +125,10 @@ function writeApps(apps) {
 }
 
 function assertAdminToken(token) {
-  const expectedToken = PropertiesService.getScriptProperties().getProperty("ADMIN_TOKEN");
+  const properties = PropertiesService.getScriptProperties();
+  const expectedToken =
+    properties.getProperty(ADMIN_TOKEN_KEY) ||
+    properties.getProperty(ADMIN_TOKEN_LEGACY_KEY);
   if (!expectedToken) {
     throw new Error("ADMIN_TOKEN is not set");
   }

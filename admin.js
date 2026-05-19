@@ -99,29 +99,44 @@ async function saveAppsToGas() {
     throw new Error("ウェブアプリURLと管理用トークンを入力してください。");
   }
 
-  const response = await fetch(endpoint, {
+  await fetch(endpoint, {
     method: "POST",
     mode: "no-cors",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8",
+    },
     body: JSON.stringify({ token, apps: state.apps }),
   });
-  return response;
+}
+
+function wait(milliseconds) {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, milliseconds);
+  });
 }
 
 function loadAppsScriptPayload(endpoint) {
   return new Promise((resolve, reject) => {
     const callbackName = `clinicPortalAdminCallback${Date.now()}`;
     const script = document.createElement("script");
+    const timeoutId = window.setTimeout(() => {
+      delete window[callbackName];
+      script.remove();
+      reject(new Error("GASの応答がタイムアウトしました。"));
+    }, 5000);
     const url = new URL(endpoint);
     url.searchParams.set("callback", callbackName);
     url.searchParams.set("cache", String(Date.now()));
 
     window[callbackName] = (payload) => {
+      window.clearTimeout(timeoutId);
       delete window[callbackName];
       script.remove();
       resolve(payload);
     };
 
     script.onerror = () => {
+      window.clearTimeout(timeoutId);
       delete window[callbackName];
       script.remove();
       reject(new Error("GASを読み込めませんでした。"));
@@ -320,7 +335,10 @@ saveToGasButton.addEventListener("click", async () => {
   try {
     saveGasSettings();
     await saveAppsToGas();
-    setStatus("GASへ保存リクエストを送信しました。反映確認は「GASから読み込み」で行ってください。");
+    setStatus("GASへ保存リクエストを送信しました。反映を確認しています...");
+    await wait(1500);
+    await loadAppsFromGas();
+    setStatus(`GASへ保存し、${state.apps.length}件を確認しました。`);
   } catch (error) {
     console.error(error);
     setStatus(error.message);
