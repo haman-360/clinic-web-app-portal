@@ -267,6 +267,10 @@ h1 {
   letter-spacing: 0;
 }
 
+.admin-section-heading h2#addAppTitle {
+  color: var(--accent-dark);
+}
+
 .admin-section-heading p,
 .admin-status {
   margin: 0;

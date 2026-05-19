@@ -7,7 +7,9 @@ const state = {
 };
 
 const adminList = document.querySelector("#adminList");
+const addAppTitle = document.querySelector("#addAppTitle");
 const appForm = document.querySelector("#appForm");
+const appFormHelp = document.querySelector("#appFormHelp");
 const cancelEditButton = document.querySelector("#cancelEditButton");
 const categoryInput = document.querySelector("#categoryInput");
 const copyButton = document.querySelector("#copyButton");
@@ -74,11 +76,13 @@ async function loadAppsFromJson() {
   }
 
   state.apps = await response.json();
+  resetFormMode();
   render();
 }
 
 async function loadAppsFromGas() {
   state.apps = await fetchAppsFromGas();
+  resetFormMode();
   render();
 }
 
@@ -250,6 +254,8 @@ function resetFormMode() {
   appForm.reset();
   editIndexInput.value = "";
   categoryInput.value = "医師用";
+  addAppTitle.textContent = "URL登録";
+  appFormHelp.textContent = "URLを貼り付けて、表示名と対象トップページを選びます。";
   submitButton.textContent = "追加";
   cancelEditButton.hidden = true;
 }
@@ -272,6 +278,8 @@ function editApp(index) {
   descriptionInput.value = app.description || "";
   categoryInput.value = app.category || "その他";
   setSelectedProfiles(Array.isArray(app.profiles) ? app.profiles : []);
+  addAppTitle.textContent = "リンク編集中";
+  appFormHelp.textContent = "既存リンクを修正しています。新しく追加したい場合は「編集をキャンセル」を押してください。";
   submitButton.textContent = "更新";
   cancelEditButton.hidden = false;
   urlInput.focus();
