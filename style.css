@@ -167,6 +167,78 @@ h1 {
   color: #ffffff;
 }
 
+.tab-button.color-doctor,
+.category-badge.color-doctor {
+  border-color: #bfd7ff;
+  background: #eaf2ff;
+  color: #174ea6;
+}
+
+.tab-button.color-nurse,
+.category-badge.color-nurse {
+  border-color: #bde8cf;
+  background: #e8f8ef;
+  color: #1f6b3d;
+}
+
+.tab-button.color-reception,
+.category-badge.color-reception {
+  border-color: #f7d48d;
+  background: #fff5dc;
+  color: #8a5a00;
+}
+
+.tab-button.color-admin,
+.category-badge.color-admin {
+  border-color: #d6c4f7;
+  background: #f2ecff;
+  color: #5b35a8;
+}
+
+.tab-button.color-other,
+.category-badge.color-other,
+.tab-button.color-default,
+.category-badge.color-default {
+  border-color: #d8e0e4;
+  background: #f3f6f8;
+  color: #46545f;
+}
+
+.tag-button.color-asthma,
+.app-tag.color-asthma {
+  border-color: #99d5e5;
+  background: #e1f6fb;
+  color: #08657a;
+}
+
+.tag-button.color-constipation,
+.app-tag.color-constipation {
+  border-color: #f1c49b;
+  background: #fff0e1;
+  color: #8a4b0f;
+}
+
+.tag-button.color-atopy,
+.app-tag.color-atopy {
+  border-color: #f1b8c9;
+  background: #ffe8ef;
+  color: #9a2850;
+}
+
+.tag-button.color-default,
+.app-tag.color-default {
+  border-color: #cfd8dc;
+  background: #f7faf9;
+  color: var(--accent-dark);
+}
+
+.tab-button.is-active,
+.tag-button.is-active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+}
+
 .summary-row {
   min-height: 28px;
   color: var(--muted);

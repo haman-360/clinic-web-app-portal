@@ -6,6 +6,16 @@ const PROFILE_LABELS = {
   admin: "管理者用トップページ",
 };
 const GAS_APPS_CACHE_KEY = "clinicPortalGasAppsCache";
+const COLOR_CLASS_BY_LABEL = {
+  "医師用": "color-doctor",
+  "看護師用": "color-nurse",
+  "受付用": "color-reception",
+  "管理用": "color-admin",
+  "その他": "color-other",
+  "喘息": "color-asthma",
+  "便秘": "color-constipation",
+  "アトピー": "color-atopy",
+};
 
 const state = {
   apps: [],
@@ -187,6 +197,7 @@ function renderCategoryTabs() {
   uniqueCategories.forEach((category) => {
     const button = document.createElement("button");
     button.className = "tab-button";
+    button.classList.add(getColorClass(category));
     button.type = "button";
     button.dataset.category = category;
     button.setAttribute("aria-pressed", "false");
@@ -215,6 +226,7 @@ function renderTagTabs() {
     const button = document.createElement("button");
     const isActive = tag === state.activeTag;
     button.className = "tag-button";
+    button.classList.add(getColorClass(tag));
     button.type = "button";
     button.dataset.tag = tag;
     button.classList.toggle("is-active", isActive);
@@ -237,6 +249,7 @@ function renderApps() {
     const link = card.querySelector(".launch-button");
 
     categoryBadge.textContent = app.category || "その他";
+    categoryBadge.classList.add(getColorClass(app.category || "その他"));
     title.textContent = app.name || "名称未設定";
     description.textContent = app.description || "説明は未設定です。";
     renderAppTags(tags, getAppTags(app));
@@ -268,9 +281,14 @@ function renderAppTags(container, tags) {
   tags.forEach((tag) => {
     const tagChip = document.createElement("span");
     tagChip.className = "app-tag";
+    tagChip.classList.add(getColorClass(tag));
     tagChip.textContent = tag;
     container.append(tagChip);
   });
+}
+
+function getColorClass(label) {
+  return COLOR_CLASS_BY_LABEL[label] || "color-default";
 }
 
 function getProfileApps() {
