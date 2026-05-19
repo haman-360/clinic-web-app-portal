@@ -5,6 +5,7 @@ const PROFILE_LABELS = {
   reception: "受付スタッフ用トップページ",
   admin: "管理者用トップページ",
 };
+const GAS_APPS_CACHE_KEY = "clinicPortalGasAppsCache";
 
 const state = {
   apps: [],
@@ -26,40 +27,52 @@ async function loadApps() {
   try {
     const draftApps = getDraftApps();
     if (draftApps) {
-      state.apps = draftApps.filter((app) => app.visible !== false);
-      renderProfileLabel();
-      renderCategoryTabs();
-      renderApps();
+      setApps(draftApps);
       return;
     }
 
-    const configuredApps = await tryLoadConfiguredApps();
-    if (configuredApps.length > 0) {
-      state.apps = configuredApps.filter((app) => app.visible !== false);
-      renderProfileLabel();
-      renderCategoryTabs();
-      renderApps();
+    const cachedApps = getCachedConfiguredApps();
+    if (cachedApps.length > 0) {
+      setApps(cachedApps);
+      refreshConfiguredApps();
       return;
     }
 
-    const response = await fetch("apps.json", { cache: "no-store" });
-    if (!response.ok) {
-      throw new Error(`apps.json returned ${response.status}`);
-    }
-
-    const apps = await response.json();
-    if (!Array.isArray(apps)) {
-      throw new Error("apps.json must be an array");
-    }
-
-    state.apps = apps.filter((app) => app.visible !== false);
-    renderProfileLabel();
-    renderCategoryTabs();
-    renderApps();
+    const apps = await loadFallbackApps();
+    setApps(apps);
+    refreshConfiguredApps();
   } catch (error) {
     console.error(error);
     resultSummary.textContent = "";
     errorState.hidden = false;
+  }
+}
+
+function setApps(apps) {
+  state.apps = apps.filter((app) => app.visible !== false);
+  renderProfileLabel();
+  renderCategoryTabs();
+  renderApps();
+}
+
+async function loadFallbackApps() {
+  const response = await fetch("apps.json");
+  if (!response.ok) {
+    throw new Error(`apps.json returned ${response.status}`);
+  }
+
+  const apps = await response.json();
+  if (!Array.isArray(apps)) {
+    throw new Error("apps.json must be an array");
+  }
+
+  return apps;
+}
+
+async function refreshConfiguredApps() {
+  const configuredApps = await tryLoadConfiguredApps();
+  if (configuredApps.length > 0 && JSON.stringify(configuredApps) !== JSON.stringify(state.apps)) {
+    setApps(configuredApps);
   }
 }
 
@@ -83,7 +96,17 @@ async function loadConfiguredApps() {
     throw new Error(payload.error || "Apps Script response is invalid");
   }
 
+  localStorage.setItem(GAS_APPS_CACHE_KEY, JSON.stringify(payload.apps));
   return payload.apps;
+}
+
+function getCachedConfiguredApps() {
+  try {
+    const apps = JSON.parse(localStorage.getItem(GAS_APPS_CACHE_KEY) || "[]");
+    return Array.isArray(apps) ? apps : [];
+  } catch {
+    return [];
+  }
 }
 
 function loadAppsScriptPayload(endpoint) {
