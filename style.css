@@ -229,6 +229,10 @@ h1 {
   color: var(--warning);
 }
 
+.visibility-note[hidden] {
+  display: none;
+}
+
 .app-card h2 {
   margin: 0 0 8px;
   font-size: 1.18rem;

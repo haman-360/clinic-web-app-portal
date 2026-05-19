@@ -10,7 +10,7 @@
   },
   {
     "name": "喘息 spredsheet",
-    "description": "時間外相談の初期トリアージ用Webアプリ",
+    "description": "喘息入力 Full も。",
     "category": "医師用",
     "url": "https://docs.google.com/spreadsheets/d/1yoghnYq2JGSw7VOX1TaKfqU_sFCGeGA7kKUgRQiZf1o/edit?gid=0#gid=0",
     "profiles": ["doctor"],
@@ -18,62 +18,44 @@
     "visible": true
   },
   {
-    "name": "喘息入力",
-    "description": "来院受付と問診状況を確認するための業務リンク",
-    "category": "受付用",
-    "url": "https://script.google.com/macros/s/AKfycbyQk3cCfCBlCru7REOI9hvVB_qZ7Y3o7z8HHNiKJacWh9bCfM_DfgsKYe1DCSFJoggVkg/exec",
-    "profiles": ["reception"],
-    "tags": ["喘息"],
-    "visible": true
-  },
-  {
-    "name": "受付用QR作成",
-    "description": "運用状況や院内向け設定を確認する管理者用ページ",
+    "name": "便秘 QR作成",
+    "description": "問診用のQRコード",
     "category": "管理用",
     "url": "https://haman-360.github.io/constipation/constipation-ai-mvp/visit-link.html",
-    "profiles": ["admin", "reception"],
+    "profiles": ["doctor", "reception", "admin"],
     "tags": ["便秘"],
     "visible": true
   },
   {
-    "name": "医師用履歴URL作成",
-    "description": "運用状況や院内向け設定を確認する管理者用ページ",
+    "name": "便秘 医師用履歴URL作成",
+    "description": "便秘の診察の入口",
     "category": "管理用",
     "url": "https://haman-360.github.io/constipation/constipation-ai-mvp/history-link.html",
-    "profiles": ["admin", "doctor"],
+    "profiles": ["doctor", "admin"],
     "tags": ["便秘"],
     "visible": true
   },
   {
-  "name": "便秘 spredsheet",
-  "description": "google spreadsheet",
-  "category": "医師用",
-  "url": "https://docs.google.com/spreadsheets/d/1DhLgt58Najnhie3C5RtwgcQwZVwjMykGrRLhfRTGurM/edit?gid=0#gid=0",
-  "profiles": ["doctor"],
-  "tags": ["便秘"],
-  "visible": true
+    "name": "便秘 spredsheet",
+    "description": "便秘のspredsheet",
+    "category": "医師用",
+    "url": "https://docs.google.com/spreadsheets/d/1DhLgt58Najnhie3C5RtwgcQwZVwjMykGrRLhfRTGurM/edit?gid=0#gid=0",
+    "profiles": ["doctor"],
+    "tags": ["便秘"],
+    "visible": true
   },
   {
-    "name": "アトピー性皮膚炎 詳細",
-    "description": "視覚的にわかりやすい詳細版",
+    "name": "アトピー 軟膏治療方針",
+    "description": "塗り方、処方量、などの詳細",
     "category": "医師用",
-    "url": "https://haman-360.github.io/atopic-calculator/atopy_v8.html",
-    "profiles": ["doctor"],
+    "url": "https://haman-360.github.io/atopic-calculator/atopic_calculator.html",
+    "profiles": ["doctor", "nurse"],
     "tags": ["アトピー"],
     "visible": true
   },
   {
-  "name": "アトピー性皮膚炎 軟膏の計算",
-  "description": "スタッフに表示する説明",
-  "category": "医師用",
-  "url": "https://haman-360.github.io/atopic-calculator/atopic_calculator.html",
-  "profiles": ["doctor", "nurse"],
-  "tags": ["アトピー"],
-  "visible": true
-},
-  {
     "name": "日計売上 入力",
-    "description": "入力画面",
+    "description": "いつものスマホの入力画面",
     "category": "医師用",
     "url": "https://script.google.com/macros/s/AKfycby5krfCy8W62qZzgBule24N37qKkzfp8GLLI8EQ35pE--TKre-RLvpZk4Ykpqk5JoA/exec",
     "profiles": ["doctor", "admin"],
@@ -81,13 +63,12 @@
     "visible": true
   },
   {
-    "name": "かかりつけ用 パスワード作成",
+    "name": "パスワード作成",
     "description": "XXXX-XXXX-XXXXの形式でパスワードを作成するアプリ",
     "category": "医師用",
     "url": "https://haman-360.github.io/password-maker/",
-    "profiles": ["doctor", "admin"],
+    "profiles": ["doctor", "reception", "admin"],
     "tags": [],
     "visible": true
   }
-  
 ]

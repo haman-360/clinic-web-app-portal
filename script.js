@@ -33,16 +33,20 @@ async function loadApps() {
       return;
     }
 
+    const configuredApps = await tryLoadConfiguredApps();
+    if (configuredApps.length > 0) {
+      setApps(configuredApps);
+      return;
+    }
+
     const cachedApps = getCachedConfiguredApps();
     if (cachedApps.length > 0) {
       setApps(cachedApps);
-      refreshConfiguredApps();
       return;
     }
 
     const apps = await loadFallbackApps();
     setApps(apps);
-    refreshConfiguredApps();
   } catch (error) {
     console.error(error);
     resultSummary.textContent = "";
@@ -59,7 +63,7 @@ function setApps(apps) {
 }
 
 async function loadFallbackApps() {
-  const response = await fetch("apps.json");
+  const response = await fetch(`apps.json?cache=${Date.now()}`, { cache: "no-store" });
   if (!response.ok) {
     throw new Error(`apps.json returned ${response.status}`);
   }
@@ -120,7 +124,7 @@ function loadAppsScriptPayload(endpoint) {
       delete window[callbackName];
       script.remove();
       reject(new Error("Apps Scriptの応答がタイムアウトしました。"));
-    }, 5000);
+    }, 15000);
     const url = new URL(endpoint);
     url.searchParams.set("callback", callbackName);
     url.searchParams.set("cache", String(Date.now()));
