@@ -20,6 +20,31 @@
     </header>
 
     <main class="page-shell admin-shell">
+      <section class="admin-panel" aria-labelledby="gasTitle">
+        <div class="admin-section-heading">
+          <h2 id="gasTitle">Google Apps Script連携</h2>
+          <p>スプレッドシートを保存先にして、管理画面から本番データを読み書きします。</p>
+        </div>
+
+        <div class="admin-form">
+          <label>
+            <span>ウェブアプリURL</span>
+            <input id="gasEndpointInput" type="url" placeholder="https://script.google.com/macros/s/.../exec">
+          </label>
+
+          <label>
+            <span>管理用トークン</span>
+            <input id="gasTokenInput" type="password" autocomplete="current-password" placeholder="Apps Scriptで設定したトークン">
+          </label>
+
+          <div class="form-actions">
+            <button class="secondary-button" id="saveGasSettingsButton" type="button">接続設定を保存</button>
+            <button class="secondary-button" id="loadFromGasButton" type="button">GASから読み込み</button>
+            <button class="primary-button" id="saveToGasButton" type="button">GASへ保存</button>
+          </div>
+        </div>
+      </section>
+
       <section class="admin-panel" aria-labelledby="addAppTitle">
         <div class="admin-section-heading">
           <h2 id="addAppTitle">URL登録</h2>
@@ -96,6 +121,7 @@
       </section>
     </main>
 
+    <script src="portal-config.js"></script>
     <script src="admin.js" defer></script>
   </body>
 </html>

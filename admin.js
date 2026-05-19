@@ -1,4 +1,6 @@
 const STORAGE_KEY = "clinicPortalAppsDraft";
+const GAS_ENDPOINT_KEY = "clinicPortalGasEndpoint";
+const GAS_TOKEN_KEY = "clinicPortalGasToken";
 
 const state = {
   apps: [],
@@ -12,16 +14,23 @@ const copyButton = document.querySelector("#copyButton");
 const descriptionInput = document.querySelector("#descriptionInput");
 const downloadButton = document.querySelector("#downloadButton");
 const editIndexInput = document.querySelector("#editIndexInput");
+const gasEndpointInput = document.querySelector("#gasEndpointInput");
+const gasTokenInput = document.querySelector("#gasTokenInput");
 const jsonOutput = document.querySelector("#jsonOutput");
+const loadFromGasButton = document.querySelector("#loadFromGasButton");
 const nameInput = document.querySelector("#nameInput");
 const previewButton = document.querySelector("#previewButton");
 const resetDraftButton = document.querySelector("#resetDraftButton");
+const saveGasSettingsButton = document.querySelector("#saveGasSettingsButton");
+const saveToGasButton = document.querySelector("#saveToGasButton");
 const statusText = document.querySelector("#adminStatus");
 const submitButton = document.querySelector("#submitButton");
 const urlInput = document.querySelector("#urlInput");
 
 async function loadApps() {
   try {
+    loadGasSettings();
+
     const savedDraft = localStorage.getItem(STORAGE_KEY);
     if (savedDraft) {
       state.apps = JSON.parse(savedDraft);
@@ -45,6 +54,19 @@ async function loadApps() {
   }
 }
 
+function loadGasSettings() {
+  gasEndpointInput.value =
+    localStorage.getItem(GAS_ENDPOINT_KEY) ||
+    window.CLINIC_PORTAL_CONFIG?.appsScriptEndpoint ||
+    "";
+  gasTokenInput.value = localStorage.getItem(GAS_TOKEN_KEY) || "";
+}
+
+function saveGasSettings() {
+  localStorage.setItem(GAS_ENDPOINT_KEY, gasEndpointInput.value.trim());
+  localStorage.setItem(GAS_TOKEN_KEY, gasTokenInput.value);
+}
+
 async function loadAppsFromJson() {
   const response = await fetch("apps.json", { cache: "no-store" });
   if (!response.ok) {
@@ -53,6 +75,61 @@ async function loadAppsFromJson() {
 
   state.apps = await response.json();
   render();
+}
+
+async function loadAppsFromGas() {
+  const endpoint = gasEndpointInput.value.trim();
+  if (!endpoint) {
+    throw new Error("ウェブアプリURLを入力してください。");
+  }
+
+  const payload = await loadAppsScriptPayload(endpoint);
+  if (!payload.ok || !Array.isArray(payload.apps)) {
+    throw new Error(payload.error || "GASの応答形式が正しくありません。");
+  }
+
+  state.apps = payload.apps;
+  render();
+}
+
+async function saveAppsToGas() {
+  const endpoint = gasEndpointInput.value.trim();
+  const token = gasTokenInput.value;
+  if (!endpoint || !token) {
+    throw new Error("ウェブアプリURLと管理用トークンを入力してください。");
+  }
+
+  const response = await fetch(endpoint, {
+    method: "POST",
+    mode: "no-cors",
+    body: JSON.stringify({ token, apps: state.apps }),
+  });
+  return response;
+}
+
+function loadAppsScriptPayload(endpoint) {
+  return new Promise((resolve, reject) => {
+    const callbackName = `clinicPortalAdminCallback${Date.now()}`;
+    const script = document.createElement("script");
+    const url = new URL(endpoint);
+    url.searchParams.set("callback", callbackName);
+    url.searchParams.set("cache", String(Date.now()));
+
+    window[callbackName] = (payload) => {
+      delete window[callbackName];
+      script.remove();
+      resolve(payload);
+    };
+
+    script.onerror = () => {
+      delete window[callbackName];
+      script.remove();
+      reject(new Error("GASを読み込めませんでした。"));
+    };
+
+    script.src = url.toString();
+    document.body.append(script);
+  });
 }
 
 function render() {
@@ -221,6 +298,33 @@ appForm.addEventListener("submit", (event) => {
 cancelEditButton.addEventListener("click", () => {
   resetFormMode();
   setStatus("編集をキャンセルしました。");
+});
+
+saveGasSettingsButton.addEventListener("click", () => {
+  saveGasSettings();
+  setStatus("GAS接続設定を保存しました。");
+});
+
+loadFromGasButton.addEventListener("click", async () => {
+  try {
+    saveGasSettings();
+    await loadAppsFromGas();
+    setStatus("GASから読み込みました。");
+  } catch (error) {
+    console.error(error);
+    setStatus(error.message);
+  }
+});
+
+saveToGasButton.addEventListener("click", async () => {
+  try {
+    saveGasSettings();
+    await saveAppsToGas();
+    setStatus("GASへ保存リクエストを送信しました。反映確認は「GASから読み込み」で行ってください。");
+  } catch (error) {
+    console.error(error);
+    setStatus(error.message);
+  }
 });
 
 copyButton.addEventListener("click", async () => {

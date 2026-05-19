@@ -33,6 +33,15 @@ async function loadApps() {
       return;
     }
 
+    const configuredApps = await loadConfiguredApps();
+    if (configuredApps) {
+      state.apps = configuredApps.filter((app) => app.visible !== false);
+      renderProfileLabel();
+      renderCategoryTabs();
+      renderApps();
+      return;
+    }
+
     const response = await fetch("apps.json", { cache: "no-store" });
     if (!response.ok) {
       throw new Error(`apps.json returned ${response.status}`);
@@ -52,6 +61,45 @@ async function loadApps() {
     resultSummary.textContent = "";
     errorState.hidden = false;
   }
+}
+
+async function loadConfiguredApps() {
+  const endpoint = window.CLINIC_PORTAL_CONFIG?.appsScriptEndpoint?.trim();
+  if (!endpoint) {
+    return null;
+  }
+
+  const payload = await loadAppsScriptPayload(endpoint);
+  if (!payload.ok || !Array.isArray(payload.apps)) {
+    throw new Error(payload.error || "Apps Script response is invalid");
+  }
+
+  return payload.apps;
+}
+
+function loadAppsScriptPayload(endpoint) {
+  return new Promise((resolve, reject) => {
+    const callbackName = `clinicPortalCallback${Date.now()}`;
+    const script = document.createElement("script");
+    const url = new URL(endpoint);
+    url.searchParams.set("callback", callbackName);
+    url.searchParams.set("cache", String(Date.now()));
+
+    window[callbackName] = (payload) => {
+      delete window[callbackName];
+      script.remove();
+      resolve(payload);
+    };
+
+    script.onerror = () => {
+      delete window[callbackName];
+      script.remove();
+      reject(new Error("Apps Scriptを読み込めませんでした。"));
+    };
+
+    script.src = url.toString();
+    document.body.append(script);
+  });
 }
 
 function getDraftApps() {

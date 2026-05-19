@@ -10,6 +10,8 @@
 - `apps.json`: 表示するアプリ一覧
 - `admin.html`: URL登録、並び替え、JSON出力を行う管理ツール
 - `admin.js`: 管理ツールの動作
+- `portal-config.js`: Google Apps Script連携などの公開設定
+- `google-apps-script/Code.gs`: スプレッドシート保存用のApps Script
 - `PROJECT.md`: プロジェクト要件
 
 ## アプリを追加する方法
@@ -77,6 +79,17 @@ https://example.github.io/clinic-web-app-portal/admin.html
 
 GitHub Pagesだけでは、ブラウザから直接 `apps.json` を書き換えることはできません。
 本番に反映する場合は、管理ツールで出力したJSONを `apps.json` の内容として更新してください。
+
+## Google Apps Scriptで本番反映する
+
+Google Apps Scriptを使うと、管理画面からスプレッドシートへ保存し、職員用トップページへ反映できます。
+
+1. `google-apps-script/Code.gs` をGoogleスプレッドシートに紐づくApps Scriptへ貼り付けます。
+2. `setupPortalSheet()` を1回実行します。
+3. `setAdminToken("任意の長い管理用パスワード")` を1回実行します。
+4. Webアプリとしてデプロイします。
+5. `portal-config.js` の `appsScriptEndpoint` にWebアプリURLを設定します。
+6. `admin.html` の「Google Apps Script連携」からURLと管理用トークンを保存し、「GASへ保存」を押します。
 
 ## ローカル確認
 
