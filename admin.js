@@ -355,8 +355,9 @@ appForm.addEventListener("submit", (event) => {
     visible: true,
   };
 
+  const isEditMode = editIndexInput.value !== "";
   const editIndex = Number(editIndexInput.value);
-  const isEditing = Number.isInteger(editIndex) && editIndex >= 0 && editIndex < state.apps.length;
+  const isEditing = isEditMode && Number.isInteger(editIndex) && editIndex >= 0 && editIndex < state.apps.length;
 
   if (isEditing) {
     state.apps[editIndex] = app;
