@@ -4,6 +4,7 @@ const GAS_TOKEN_KEY = "clinicPortalGasToken";
 
 const state = {
   apps: [],
+  lastGasLoadSucceeded: false,
 };
 
 const adminList = document.querySelector("#adminList");
@@ -82,9 +83,12 @@ async function loadAppsFromJson() {
 }
 
 async function loadAppsFromGas() {
-  state.apps = await fetchAppsFromGas();
+  const apps = await fetchAppsFromGas();
+  state.apps = apps;
+  state.lastGasLoadSucceeded = true;
   resetFormMode();
   render();
+  return apps;
 }
 
 async function fetchAppsFromGas() {
@@ -403,11 +407,15 @@ loadFromGasButton.addEventListener("click", async () => {
   try {
     setButtonLoading(loadFromGasButton, true, "読み込み中...");
     saveGasSettings();
+    const previousJson = JSON.stringify(state.apps);
     setStatus("GASから読み込んでいます...");
-    await loadAppsFromGas();
-    setStatus("GASから読み込みました。");
+    const loadedApps = await loadAppsFromGas();
+    const unchanged = previousJson === JSON.stringify(loadedApps);
+    const unchangedText = unchanged ? "（表示内容は変更ありません）" : "";
+    setStatus(`GASから${loadedApps.length}件を読み込みました${unchangedText}。`);
   } catch (error) {
     console.error(error);
+    state.lastGasLoadSucceeded = false;
     setStatus(error.message);
   } finally {
     setButtonLoading(loadFromGasButton, false);
@@ -418,6 +426,17 @@ saveToGasButton.addEventListener("click", async () => {
   try {
     setButtonLoading(saveToGasButton, true, "保存中...");
     saveGasSettings();
+    if (!state.lastGasLoadSucceeded) {
+      const shouldSaveWithoutGasLoad = window.confirm(
+        "この画面ではまだGASからの読み込み成功を確認できていません。\n\n現在表示されている下書きでGASを上書きしますか？\n不安な場合は「キャンセル」して、先に「GASから読み込み」を成功させてください。"
+      );
+
+      if (!shouldSaveWithoutGasLoad) {
+        setStatus("GASへの保存をキャンセルしました。先に「GASから読み込み」を実行してください。");
+        return;
+      }
+    }
+
     const submittedApps = JSON.parse(JSON.stringify(state.apps));
     await saveAppsToGas();
     setStatus("GASへ保存リクエストを送信しました。反映を確認しています...");
@@ -431,6 +450,7 @@ saveToGasButton.addEventListener("click", async () => {
     }
 
     state.apps = savedApps;
+    state.lastGasLoadSucceeded = true;
     render();
     setStatus(`GASへ保存し、${state.apps.length}件を確認しました。`);
   } catch (error) {
