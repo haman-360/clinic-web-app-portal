@@ -155,6 +155,20 @@ h1 {
   padding: 8px 13px;
 }
 
+.tag-button[data-sortable="true"] {
+  cursor: grab;
+  touch-action: none;
+}
+
+.tag-button[data-sortable="true"]:active {
+  cursor: grabbing;
+}
+
+.tag-button.is-dragging {
+  opacity: 0.55;
+  transform: scale(0.98);
+}
+
 .tab-button:hover,
 .tag-button:hover {
   border-color: var(--accent);

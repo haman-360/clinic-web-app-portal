@@ -6,6 +6,7 @@ const PROFILE_LABELS = {
   admin: "管理者用トップページ",
 };
 const GAS_APPS_CACHE_KEY = "clinicPortalGasAppsCache";
+const TAG_ORDER_STORAGE_KEY = "clinicPortalTagOrder";
 const COLOR_CLASS_BY_LABEL = {
   "医師用": "color-doctor",
   "看護師用": "color-nurse",
@@ -22,6 +23,9 @@ const state = {
   profile: getProfileFromUrl(),
   activeCategory: "all",
   activeTag: "all",
+  tagOrder: loadSavedTagOrder(),
+  didDragTag: false,
+  pointerTagDrag: null,
   query: "",
 };
 
@@ -212,7 +216,7 @@ function renderTagTabs() {
   });
 
   const tags = getProfileApps().flatMap((app) => getAppTags(app));
-  const uniqueTags = [...new Set(tags)];
+  const uniqueTags = sortTags([...new Set(tags)]);
 
   if (state.activeTag !== "all" && !uniqueTags.includes(state.activeTag)) {
     state.activeTag = "all";
@@ -229,11 +233,55 @@ function renderTagTabs() {
     button.classList.add(getColorClass(tag));
     button.type = "button";
     button.dataset.tag = tag;
+    button.dataset.sortable = "true";
     button.classList.toggle("is-active", isActive);
     button.setAttribute("aria-pressed", String(isActive));
+    button.setAttribute("aria-label", `${tag}。ドラッグしてタグを並び替え`);
+    button.title = "ドラッグして並び替え";
     button.textContent = tag;
     tagTabs.append(button);
   });
+}
+
+function sortTags(tags) {
+  const savedIndexByTag = new Map(state.tagOrder.map((tag, index) => [tag, index]));
+  return [...tags].sort((firstTag, secondTag) => {
+    const firstIndex = savedIndexByTag.has(firstTag) ? savedIndexByTag.get(firstTag) : Number.MAX_SAFE_INTEGER;
+    const secondIndex = savedIndexByTag.has(secondTag) ? savedIndexByTag.get(secondTag) : Number.MAX_SAFE_INTEGER;
+
+    if (firstIndex !== secondIndex) {
+      return firstIndex - secondIndex;
+    }
+
+    return tags.indexOf(firstTag) - tags.indexOf(secondTag);
+  });
+}
+
+function loadSavedTagOrder() {
+  try {
+    const tagOrder = JSON.parse(localStorage.getItem(TAG_ORDER_STORAGE_KEY) || "[]");
+    return Array.isArray(tagOrder)
+      ? tagOrder.map((tag) => tag.toString().trim()).filter(Boolean)
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveTagOrderFromVisibleTabs() {
+  const visibleTags = [...tagTabs.querySelectorAll("button[data-tag]:not([data-tag='all'])")]
+    .map((button) => button.dataset.tag)
+    .filter(Boolean);
+  const visibleTagSet = new Set(visibleTags);
+  const hiddenOrderedTags = state.tagOrder.filter((tag) => !visibleTagSet.has(tag));
+
+  state.tagOrder = [...visibleTags, ...hiddenOrderedTags];
+  localStorage.setItem(TAG_ORDER_STORAGE_KEY, JSON.stringify(state.tagOrder));
+}
+
+function getDropPlacement(event, targetButton) {
+  const rect = targetButton.getBoundingClientRect();
+  return event.clientX > rect.left + rect.width / 2;
 }
 
 function renderApps() {
@@ -350,6 +398,10 @@ categoryTabs.addEventListener("click", (event) => {
 tagTabs.addEventListener("click", (event) => {
   const button = event.target.closest("button[data-tag]");
   if (!button) return;
+  if (state.didDragTag) {
+    state.didDragTag = false;
+    return;
+  }
 
   state.activeTag = button.dataset.tag;
 
@@ -360,6 +412,73 @@ tagTabs.addEventListener("click", (event) => {
   });
 
   renderApps();
+});
+
+tagTabs.addEventListener("pointerdown", (event) => {
+  const button = event.target.closest("button[data-tag]:not([data-tag='all'])");
+  if (!button) return;
+
+  button.setPointerCapture(event.pointerId);
+  state.pointerTagDrag = {
+    button,
+    pointerId: event.pointerId,
+    startX: event.clientX,
+    startY: event.clientY,
+    isSorting: false,
+  };
+});
+
+tagTabs.addEventListener("pointermove", (event) => {
+  const dragState = state.pointerTagDrag;
+  if (!dragState || dragState.pointerId !== event.pointerId) return;
+
+  const movedEnough =
+    Math.abs(event.clientX - dragState.startX) > 8 ||
+    Math.abs(event.clientY - dragState.startY) > 8;
+  if (!dragState.isSorting && movedEnough) {
+    dragState.isSorting = true;
+    dragState.button.classList.add("is-dragging");
+  }
+  if (!dragState.isSorting) return;
+
+  event.preventDefault();
+  const targetButton = document
+    .elementFromPoint(event.clientX, event.clientY)
+    ?.closest("button[data-tag]:not([data-tag='all'])");
+  if (!targetButton || targetButton === dragState.button || !tagTabs.contains(targetButton)) return;
+
+  const shouldPlaceAfter = getDropPlacement(event, targetButton);
+  tagTabs.insertBefore(dragState.button, shouldPlaceAfter ? targetButton.nextSibling : targetButton);
+});
+
+tagTabs.addEventListener("pointerup", (event) => {
+  const dragState = state.pointerTagDrag;
+  if (!dragState || dragState.pointerId !== event.pointerId) return;
+
+  if (dragState.button.hasPointerCapture(event.pointerId)) {
+    dragState.button.releasePointerCapture(event.pointerId);
+  }
+
+  if (dragState.isSorting) {
+    state.didDragTag = true;
+    dragState.button.classList.remove("is-dragging");
+    saveTagOrderFromVisibleTabs();
+    renderTagTabs();
+    window.setTimeout(() => {
+      state.didDragTag = false;
+    }, 0);
+  }
+
+  state.pointerTagDrag = null;
+});
+
+tagTabs.addEventListener("pointercancel", () => {
+  const dragState = state.pointerTagDrag;
+  dragState?.button.classList.remove("is-dragging");
+  if (dragState?.button.hasPointerCapture(dragState.pointerId)) {
+    dragState.button.releasePointerCapture(dragState.pointerId);
+  }
+  state.pointerTagDrag = null;
 });
 
 searchInput.addEventListener("input", (event) => {
