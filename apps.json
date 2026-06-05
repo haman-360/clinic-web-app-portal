@@ -54,6 +54,24 @@
     "visible": true
   },
   {
+    "name": "iPad塗り方",
+    "description": "iPadで塗り方を説明する",
+    "category": "医師用",
+    "url": "https://haman-360.github.io/atopic-calculator/visual_prescription.html",
+    "profiles": ["doctor", "admin"],
+    "tags": ["アトピー"],
+    "visible": true
+  },
+  {
+    "name": "iPad EASIスコア",
+    "description": "iPadでEASIスコアを計算",
+    "category": "医師用",
+    "url": "https://script.google.com/macros/s/AKfycbyYlP8b_E-X4tDYZQm6uDn3cbsaAcAezMjsJw4coN_nW-QCTbLqMtz0tkNShej1gLApYw/exec?page=easi&secret=11561",
+    "profiles": ["doctor", "admin"],
+    "tags": ["アトピー"],
+    "visible": true
+  },
+  {
     "name": "日計売上 入力",
     "description": "いつものスマホの入力画面",
     "category": "医師用",
