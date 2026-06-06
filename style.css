@@ -144,7 +144,7 @@ h1 {
 
 .tab-button,
 .tag-button {
-  min-height: 40px;
+  min-height: 38px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
@@ -152,7 +152,11 @@ h1 {
   cursor: pointer;
   font: inherit;
   font-weight: 700;
-  padding: 8px 13px;
+  padding: 7px 12px;
+}
+
+.tag-button {
+  border-radius: 999px;
 }
 
 .tag-button[data-sortable="true"] {
@@ -234,9 +238,9 @@ h1 {
 
 .tag-button.color-atopy,
 .app-tag.color-atopy {
-  border-color: #f1b8c9;
-  background: #ffe8ef;
-  color: #9a2850;
+  border-color: #a8dfc3;
+  background: #e5f7ee;
+  color: #1f6b3d;
 }
 
 .tag-button.color-default,
@@ -265,43 +269,68 @@ h1 {
 
 .app-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
 }
 
 .app-card {
-  min-height: 230px;
+  --card-accent: var(--accent);
+  --card-accent-dark: var(--accent-dark);
+  --card-border: var(--line);
+  --card-tint: var(--surface);
+  min-height: 188px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-border);
   border-radius: 8px;
-  background: var(--surface);
+  background: var(--card-tint);
   box-shadow: var(--shadow);
   overflow: hidden;
 }
 
+.app-card.color-asthma {
+  --card-accent: #0b7890;
+  --card-accent-dark: #07576a;
+  --card-border: #b7dfe8;
+  --card-tint: #f1fbfd;
+}
+
+.app-card.color-constipation {
+  --card-accent: #b15d12;
+  --card-accent-dark: #8a4b0f;
+  --card-border: #f1c49b;
+  --card-tint: #fff8ef;
+}
+
+.app-card.color-atopy {
+  --card-accent: #238453;
+  --card-accent-dark: #1f6b3d;
+  --card-border: #b7e3cb;
+  --card-tint: #f2fbf6;
+}
+
 .card-body {
-  padding: 18px 18px 14px;
+  padding: 14px 14px 10px;
 }
 
 .card-topline {
-  min-height: 27px;
+  min-height: 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .category-badge,
 .visibility-note {
   display: inline-flex;
   align-items: center;
-  min-height: 27px;
-  border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 0.78rem;
+  min-height: 24px;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 0.72rem;
   font-weight: 800;
 }
 
@@ -320,8 +349,8 @@ h1 {
 }
 
 .app-card h2 {
-  margin: 0 0 8px;
-  font-size: 1.18rem;
+  margin: 0 0 6px;
+  font-size: 1.04rem;
   line-height: 1.35;
   letter-spacing: 0;
 }
@@ -329,14 +358,14 @@ h1 {
 .description {
   margin: 0;
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: 0.88rem;
 }
 
 .app-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 14px;
+  margin-top: 11px;
 }
 
 .app-tag {
@@ -353,21 +382,25 @@ h1 {
 }
 
 .launch-button {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  margin: 0 18px 18px;
-  border-radius: 8px;
-  background: var(--accent);
+  align-self: flex-start;
+  min-width: 88px;
+  min-height: 36px;
+  margin: 0 14px 14px;
+  border-radius: 999px;
+  background: var(--card-accent);
   color: #ffffff;
+  font-size: 0.9rem;
   font-weight: 800;
+  padding: 7px 18px;
   text-decoration: none;
 }
 
 .launch-button:hover,
 .launch-button:focus {
-  background: var(--accent-dark);
+  background: var(--card-accent-dark);
 }
 
 .admin-shell {

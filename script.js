@@ -290,18 +290,22 @@ function renderApps() {
 
   filteredApps.forEach((app) => {
     const card = template.content.firstElementChild.cloneNode(true);
+    const appTags = getAppTags(app);
+    const primaryTag = getPrimaryTag(appTags);
     const categoryBadge = card.querySelector(".category-badge");
     const title = card.querySelector("h2");
     const description = card.querySelector(".description");
     const tags = card.querySelector(".app-tags");
     const link = card.querySelector(".launch-button");
 
+    card.classList.add(getColorClass(primaryTag));
     categoryBadge.textContent = app.category || "その他";
     categoryBadge.classList.add(getColorClass(app.category || "その他"));
     title.textContent = app.name || "名称未設定";
     description.textContent = app.description || "説明は未設定です。";
-    renderAppTags(tags, getAppTags(app));
+    renderAppTags(tags, appTags);
     link.href = app.url || "#";
+    link.classList.add(getColorClass(primaryTag));
     link.setAttribute("aria-label", `${title.textContent}を起動`);
 
     if (!app.url) {
@@ -374,6 +378,10 @@ function getAppTags(app) {
   return Array.isArray(app.tags)
     ? app.tags.map((tag) => tag.toString().trim()).filter(Boolean)
     : [];
+}
+
+function getPrimaryTag(tags) {
+  return tags[0] || "";
 }
 
 function normalizeText(value) {
