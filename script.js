@@ -7,23 +7,23 @@ const PROFILE_LABELS = {
 };
 const GAS_APPS_CACHE_KEY = "clinicPortalGasAppsCache";
 const TAG_ORDER_STORAGE_KEY = "clinicPortalTagOrder";
+const TAG_COLOR_VERSION_STORAGE_KEY = "clinicPortalTagColorVersion";
 const COLOR_CLASS_BY_LABEL = {
   "医師用": "color-doctor",
   "看護師用": "color-nurse",
   "受付用": "color-reception",
   "管理用": "color-admin",
   "その他": "color-other",
-  "喘息": "color-asthma",
-  "便秘": "color-constipation",
-  "アトピー": "color-atopy",
 };
+const TAG_COLOR_HUES = [188, 27, 145, 268, 52, 216, 103, 335, 173, 10, 238, 77];
 
 const state = {
   apps: [],
   profile: getProfileFromUrl(),
   activeCategory: "all",
-  activeTag: "all",
+  activeTags: new Set(),
   tagOrder: loadSavedTagOrder(),
+  tagColorVersion: loadTagColorVersion(),
   didDragTag: false,
   pointerTagDrag: null,
   query: "",
@@ -37,6 +37,7 @@ const profileLabel = document.querySelector("#profileLabel");
 const resultSummary = document.querySelector("#resultSummary");
 const searchInput = document.querySelector("#searchInput");
 const tagTabs = document.querySelector("#tagTabs");
+const regenerateColorsButton = document.querySelector("#regenerateColorsButton");
 const template = document.querySelector("#appCardTemplate");
 
 async function loadApps() {
@@ -218,26 +219,27 @@ function renderTagTabs() {
   const tags = getProfileApps().flatMap((app) => getAppTags(app));
   const uniqueTags = sortTags([...new Set(tags)]);
 
-  if (state.activeTag !== "all" && !uniqueTags.includes(state.activeTag)) {
-    state.activeTag = "all";
-  }
+  const uniqueTagSet = new Set(uniqueTags);
+  state.activeTags = new Set([...state.activeTags].filter((tag) => uniqueTagSet.has(tag)));
 
   const allButton = tagTabs.querySelector("button[data-tag='all']");
-  allButton.classList.toggle("is-active", state.activeTag === "all");
-  allButton.setAttribute("aria-pressed", String(state.activeTag === "all"));
+  const isAllActive = state.activeTags.size === 0;
+  allButton.classList.toggle("is-active", isAllActive);
+  allButton.setAttribute("aria-pressed", String(isAllActive));
 
-  uniqueTags.forEach((tag) => {
+  uniqueTags.forEach((tag, index) => {
     const button = document.createElement("button");
-    const isActive = tag === state.activeTag;
+    const isActive = state.activeTags.has(tag);
     button.className = "tag-button";
-    button.classList.add(getColorClass(tag));
+    button.classList.add("color-auto");
     button.type = "button";
     button.dataset.tag = tag;
     button.dataset.sortable = "true";
     button.classList.toggle("is-active", isActive);
     button.setAttribute("aria-pressed", String(isActive));
-    button.setAttribute("aria-label", `${tag}。ドラッグしてタグを並び替え`);
+    button.setAttribute("aria-label", `${tag}${isActive ? "、選択中" : ""}。クリックで選択、ドラッグで並び替え`);
     button.title = "ドラッグして並び替え";
+    applyTagColor(button, tag, index);
     button.textContent = tag;
     tagTabs.append(button);
   });
@@ -268,6 +270,15 @@ function loadSavedTagOrder() {
   }
 }
 
+function loadTagColorVersion() {
+  const version = Number(localStorage.getItem(TAG_COLOR_VERSION_STORAGE_KEY));
+  return Number.isFinite(version) && version >= 0 ? version : 0;
+}
+
+function saveTagColorVersion() {
+  localStorage.setItem(TAG_COLOR_VERSION_STORAGE_KEY, String(state.tagColorVersion));
+}
+
 function saveTagOrderFromVisibleTabs() {
   const visibleTags = [...tagTabs.querySelectorAll("button[data-tag]:not([data-tag='all'])")]
     .map((button) => button.dataset.tag)
@@ -286,6 +297,7 @@ function getDropPlacement(event, targetButton) {
 
 function renderApps() {
   const filteredApps = getFilteredApps();
+  const colorIndexByTag = getColorIndexByTag();
   appGrid.replaceChildren();
 
   filteredApps.forEach((app) => {
@@ -298,14 +310,22 @@ function renderApps() {
     const tags = card.querySelector(".app-tags");
     const link = card.querySelector(".launch-button");
 
-    card.classList.add(getColorClass(primaryTag));
+    if (primaryTag) {
+      card.classList.add("color-auto");
+      applyCardColor(card, primaryTag, colorIndexByTag.get(primaryTag) || 0);
+    } else {
+      card.classList.add("color-default");
+    }
     categoryBadge.textContent = app.category || "その他";
     categoryBadge.classList.add(getColorClass(app.category || "その他"));
     title.textContent = app.name || "名称未設定";
     description.textContent = app.description || "説明は未設定です。";
-    renderAppTags(tags, appTags);
+    renderAppTags(tags, appTags, colorIndexByTag);
     link.href = app.url || "#";
-    link.classList.add(getColorClass(primaryTag));
+    if (primaryTag) {
+      link.classList.add("color-auto");
+      applyLaunchColor(link, primaryTag, colorIndexByTag.get(primaryTag) || 0);
+    }
     link.setAttribute("aria-label", `${title.textContent}を起動`);
 
     if (!app.url) {
@@ -318,7 +338,7 @@ function renderApps() {
   });
 
   const categoryLabel = state.activeCategory === "all" ? "すべて" : state.activeCategory;
-  const tagLabel = state.activeTag === "all" ? "タグすべて" : `タグ: ${state.activeTag}`;
+  const tagLabel = state.activeTags.size === 0 ? "タグすべて" : `タグ: ${[...state.activeTags].join(" / ")}`;
   const profileLabelText = state.profile
     ? PROFILE_LABELS[state.profile] || `${state.profile} 用`
     : "共通";
@@ -326,14 +346,15 @@ function renderApps() {
   emptyState.hidden = filteredApps.length > 0;
 }
 
-function renderAppTags(container, tags) {
+function renderAppTags(container, tags, colorIndexByTag) {
   container.replaceChildren();
   container.hidden = tags.length === 0;
 
   tags.forEach((tag) => {
     const tagChip = document.createElement("span");
     tagChip.className = "app-tag";
-    tagChip.classList.add(getColorClass(tag));
+    tagChip.classList.add("color-auto");
+    applyTagColor(tagChip, tag, colorIndexByTag.get(tag) || 0);
     tagChip.textContent = tag;
     container.append(tagChip);
   });
@@ -364,7 +385,8 @@ function getFilteredApps() {
     const matchesCategory =
       state.activeCategory === "all" || app.category === state.activeCategory;
     const appTags = getAppTags(app);
-    const matchesTag = state.activeTag === "all" || appTags.includes(state.activeTag);
+    const matchesTag =
+      state.activeTags.size === 0 || appTags.some((tag) => state.activeTags.has(tag));
     const searchableText = normalizeText(
       `${app.name || ""} ${app.description || ""} ${app.category || ""} ${appTags.join(" ")}`,
     );
@@ -382,6 +404,57 @@ function getAppTags(app) {
 
 function getPrimaryTag(tags) {
   return tags[0] || "";
+}
+
+function getColorIndexByTag() {
+  const tags = sortTags([...new Set(getProfileApps().flatMap((app) => getAppTags(app)))]);
+  return new Map(tags.map((tag, index) => [tag, index]));
+}
+
+function getTagColorSet(tag, index = 0) {
+  const hueBase = TAG_COLOR_HUES[index % TAG_COLOR_HUES.length];
+  const cycleShift = Math.floor(index / TAG_COLOR_HUES.length) * 17;
+  const versionShift = (state.tagColorVersion * 41 + stableHash(tag) % 23) % 360;
+  const hue = (hueBase + cycleShift + versionShift) % 360;
+
+  return {
+    accent: `hsl(${hue} 62% 34%)`,
+    accentDark: `hsl(${hue} 66% 25%)`,
+    border: `hsl(${hue} 48% 74%)`,
+    tint: `hsl(${hue} 74% 96%)`,
+    soft: `hsl(${hue} 74% 91%)`,
+    text: `hsl(${hue} 66% 28%)`,
+  };
+}
+
+function stableHash(value) {
+  let hash = 0;
+  for (const character of value) {
+    hash = (hash * 31 + character.codePointAt(0)) >>> 0;
+  }
+  return hash;
+}
+
+function applyTagColor(element, tag, index) {
+  const color = getTagColorSet(tag, index);
+  element.style.setProperty("--tag-accent", color.accent);
+  element.style.setProperty("--tag-border", color.border);
+  element.style.setProperty("--tag-bg", color.soft);
+  element.style.setProperty("--tag-text", color.text);
+}
+
+function applyCardColor(element, tag, index) {
+  const color = getTagColorSet(tag, index);
+  element.style.setProperty("--card-accent", color.accent);
+  element.style.setProperty("--card-accent-dark", color.accentDark);
+  element.style.setProperty("--card-border", color.border);
+  element.style.setProperty("--card-tint", color.tint);
+}
+
+function applyLaunchColor(element, tag, index) {
+  const color = getTagColorSet(tag, index);
+  element.style.setProperty("--launch-bg", color.accent);
+  element.style.setProperty("--launch-bg-hover", color.accentDark);
 }
 
 function normalizeText(value) {
@@ -411,14 +484,23 @@ tagTabs.addEventListener("click", (event) => {
     return;
   }
 
-  state.activeTag = button.dataset.tag;
+  const selectedTag = button.dataset.tag;
+  if (selectedTag === "all") {
+    state.activeTags.clear();
+  } else if (state.activeTags.has(selectedTag)) {
+    state.activeTags.delete(selectedTag);
+  } else {
+    state.activeTags.add(selectedTag);
+  }
 
-  tagTabs.querySelectorAll(".tag-button").forEach((tab) => {
-    const isActive = tab === button;
-    tab.classList.toggle("is-active", isActive);
-    tab.setAttribute("aria-pressed", String(isActive));
-  });
+  renderTagTabs();
+  renderApps();
+});
 
+regenerateColorsButton.addEventListener("click", () => {
+  state.tagColorVersion += 1;
+  saveTagColorVersion();
+  renderTagTabs();
   renderApps();
 });
 
