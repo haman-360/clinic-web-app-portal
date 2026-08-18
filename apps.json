@@ -2,91 +2,329 @@
   {
     "name": "喘息フォロー入力 Light",
     "description": "喘息患者の経過、FeNO、スパイロ、薬剤情報を管理するアプリ",
-    "category": "医師用",
+    "group": "喘息",
+    "purpose": "診察",
     "url": "https://script.google.com/macros/s/AKfycbyQk3cCfCBlCru7REOI9hvVB_qZ7Y3o7z8HHNiKJacWh9bCfM_DfgsKYe1DCSFJoggVkg/exec",
-    "profiles": ["doctor"],
-    "tags": ["喘息"],
+    "staffVisible": false,
+    "keywords": [
+      "asthma",
+      "follow",
+      "light"
+    ],
     "visible": true
   },
   {
     "name": "喘息 spredsheet",
     "description": "喘息入力 Full も。",
-    "category": "医師用",
+    "group": "喘息",
+    "purpose": "データ確認",
     "url": "https://docs.google.com/spreadsheets/d/1yoghnYq2JGSw7VOX1TaKfqU_sFCGeGA7kKUgRQiZf1o/edit?gid=0#gid=0",
-    "profiles": ["doctor"],
-    "tags": ["喘息"],
+    "staffVisible": false,
+    "keywords": [
+      "asthma",
+      "spreadsheet",
+      "sheet"
+    ],
     "visible": true
   },
   {
     "name": "便秘 QR作成",
     "description": "問診用のQRコード",
-    "category": "管理用",
+    "group": "便秘",
+    "purpose": "受付",
     "url": "https://haman-360.github.io/constipation/constipation-ai-mvp/visit-link.html",
-    "profiles": ["doctor", "reception", "admin"],
-    "tags": ["便秘"],
+    "staffVisible": true,
+    "keywords": [
+      "constipation",
+      "qr"
+    ],
     "visible": true
   },
   {
     "name": "便秘 医師用履歴URL作成",
     "description": "便秘の診察の入口",
-    "category": "管理用",
+    "group": "便秘",
+    "purpose": "データ確認",
     "url": "https://haman-360.github.io/constipation/constipation-ai-mvp/history-link.html",
-    "profiles": ["doctor", "admin"],
-    "tags": ["便秘"],
+    "staffVisible": false,
+    "keywords": [
+      "constipation",
+      "history"
+    ],
     "visible": true
   },
   {
     "name": "便秘 spredsheet",
     "description": "便秘のspredsheet",
-    "category": "医師用",
+    "group": "便秘",
+    "purpose": "データ確認",
     "url": "https://docs.google.com/spreadsheets/d/1DhLgt58Najnhie3C5RtwgcQwZVwjMykGrRLhfRTGurM/edit?gid=0#gid=0",
-    "profiles": ["doctor"],
-    "tags": ["便秘"],
+    "staffVisible": false,
+    "keywords": [
+      "constipation",
+      "spreadsheet",
+      "sheet"
+    ],
+    "visible": true
+  },
+  {
+    "name": "アトピー iPad塗り方",
+    "description": "iPadで塗り方を説明する",
+    "group": "アトピー",
+    "purpose": "診察",
+    "url": "https://haman-360.github.io/atopic-calculator/visual_prescription.html",
+    "staffVisible": false,
+    "keywords": [
+      "atopic",
+      "atopy"
+    ],
     "visible": true
   },
   {
     "name": "アトピー 軟膏治療方針",
     "description": "塗り方、処方量、などの詳細",
-    "category": "医師用",
+    "group": "アトピー",
+    "purpose": "診察",
     "url": "https://haman-360.github.io/atopic-calculator/atopic_calculator.html",
-    "profiles": ["doctor", "nurse"],
-    "tags": ["アトピー"],
+    "staffVisible": false,
+    "keywords": [
+      "atopic",
+      "atopy"
+    ],
     "visible": true
   },
   {
-    "name": "iPad塗り方",
-    "description": "iPadで塗り方を説明する",
-    "category": "医師用",
-    "url": "https://haman-360.github.io/atopic-calculator/visual_prescription.html",
-    "profiles": ["doctor", "admin"],
-    "tags": ["アトピー"],
-    "visible": true
-  },
-  {
-    "name": "iPad EASIスコア",
+    "name": "アトピー iPad EASIスコア",
     "description": "iPadでEASIスコアを計算",
-    "category": "医師用",
+    "group": "アトピー",
+    "purpose": "診察",
     "url": "https://script.google.com/macros/s/AKfycbyYlP8b_E-X4tDYZQm6uDn3cbsaAcAezMjsJw4coN_nW-QCTbLqMtz0tkNShej1gLApYw/exec?page=easi&secret=11561",
-    "profiles": ["doctor", "admin"],
-    "tags": ["アトピー"],
+    "staffVisible": false,
+    "keywords": [
+      "atopic",
+      "atopy"
+    ],
+    "visible": true
+  },
+  {
+    "name": "アトピー Spreadsheet",
+    "description": "Spreadsheet",
+    "group": "アトピー",
+    "purpose": "データ確認",
+    "url": "https://docs.google.com/spreadsheets/d/1gXJSUfrGzNn2spw3X9cTR1EJXWDcVzHI1JBLJQUOb9c/edit?gid=0#gid=0",
+    "staffVisible": false,
+    "keywords": [
+      "atopic",
+      "atopy"
+    ],
+    "visible": true
+  },
+  {
+    "name": "アトピー 問診QR",
+    "description": "診察券と受診日から、QRコード作成",
+    "group": "アトピー",
+    "purpose": "受付",
+    "url": "https://haman-360.github.io/atopic-calculator/reception.html",
+    "staffVisible": true,
+    "keywords": [
+      "atopic",
+      "atopy"
+    ],
+    "visible": true
+  },
+  {
+    "name": "アトピー Dashboard",
+    "description": "ダッシュボード",
+    "group": "アトピー",
+    "purpose": "データ確認",
+    "url": "https://script.google.com/macros/s/AKfycbyYlP8b_E-X4tDYZQm6uDn3cbsaAcAezMjsJw4coN_nW-QCTbLqMtz0tkNShej1gLApYw/exec?page=dashboard&secret=11561",
+    "staffVisible": false,
+    "keywords": [
+      "atopic",
+      "atopy"
+    ],
+    "visible": true
+  },
+  {
+    "name": "アレルギー性鼻炎（患者用）",
+    "description": "患者の入口。",
+    "group": "アレルギー性鼻炎",
+    "purpose": "患者入口",
+    "url": "https://script.google.com/macros/s/AKfycbwHOvbRWA0IJEEP0U-EVZ9vj1452OuKa3bcHMAKfDgepFUnYiBypFoaD2WuMBE83SnU/exec?action=form",
+    "staffVisible": true,
+    "keywords": [
+      "allergic rhinitis",
+      "rhinitis",
+      "AR",
+      "SLIT"
+    ],
+    "visible": true
+  },
+  {
+    "name": "アレルギー性鼻炎（スタッフ用）",
+    "description": "QRコード、確認コードを作る",
+    "group": "アレルギー性鼻炎",
+    "purpose": "受付",
+    "url": "https://script.google.com/macros/s/AKfycbwD4hRalmexmJ0aCKhpJ_prD8lA66xDJbMFno_FrvqDN2_4cqhpTH91dQTcewrGEXWa/exec?action=staff",
+    "staffVisible": true,
+    "keywords": [
+      "allergic rhinitis",
+      "rhinitis",
+      "AR",
+      "SLIT"
+    ],
+    "visible": true
+  },
+  {
+    "name": "アレルギー性鼻炎・SLIT 経過問診 / 医師用",
+    "description": "入力データの確認",
+    "group": "アレルギー性鼻炎",
+    "purpose": "データ確認",
+    "url": "https://script.google.com/macros/s/AKfycbwD4hRalmexmJ0aCKhpJ_prD8lA66xDJbMFno_FrvqDN2_4cqhpTH91dQTcewrGEXWa/exec?action=doctor",
+    "staffVisible": false,
+    "keywords": [
+      "allergic rhinitis",
+      "rhinitis",
+      "AR",
+      "SLIT"
+    ],
+    "visible": true
+  },
+  {
+    "name": "ワクチン 入荷登録",
+    "description": "予防接種：入荷登録",
+    "group": "ワクチン",
+    "purpose": "受付",
+    "url": "https://script.google.com/macros/s/AKfycbwokDeNLYlqYaSEi_te2X-U9k5g9IPCVtkuvLOZbLSINZ1VeUVUK25WJh_ayglvW08azA/exec?page=arrival",
+    "staffVisible": true,
+    "keywords": [
+      "vaccine",
+      "vaccination"
+    ],
+    "visible": true
+  },
+  {
+    "name": "ワクチン 接種済みヘルパー",
+    "description": "接種登録",
+    "group": "ワクチン",
+    "purpose": "受付",
+    "url": "https://script.google.com/macros/s/AKfycbwokDeNLYlqYaSEi_te2X-U9k5g9IPCVtkuvLOZbLSINZ1VeUVUK25WJh_ayglvW08azA/exec?page=vaccination",
+    "staffVisible": true,
+    "keywords": [
+      "vaccine",
+      "vaccination"
+    ],
+    "visible": true
+  },
+  {
+    "name": "夜尿症: 受診リンク作成",
+    "description": "QR読み込みのコード。日誌用のもある。",
+    "group": "夜尿症",
+    "purpose": "受付",
+    "url": "https://script.google.com/macros/s/AKfycbx2NE1QHoyi-HYR1x4JaNpsr1SqhGlwYmLQTb1FS4AsjmBnGareOEzWE_m4YP-fhgYO/exec?action=staff",
+    "staffVisible": true,
+    "keywords": [
+      "enuresis",
+      "staff",
+      "link",
+      "qr"
+    ],
+    "visible": true
+  },
+  {
+    "name": "夜尿症: 初診",
+    "description": "問診サマリー",
+    "group": "夜尿症",
+    "purpose": "データ確認",
+    "url": "https://script.google.com/macros/s/AKfycbx2NE1QHoyi-HYR1x4JaNpsr1SqhGlwYmLQTb1FS4AsjmBnGareOEzWE_m4YP-fhgYO/exec?action=doctor",
+    "staffVisible": false,
+    "keywords": [
+      "enuresis",
+      "initial",
+      "first visit"
+    ],
+    "visible": true
+  },
+  {
+    "name": "夜尿症: 日誌",
+    "description": "夜尿日誌",
+    "group": "夜尿症",
+    "purpose": "診察",
+    "url": "https://script.google.com/macros/s/AKfycbx2NE1QHoyi-HYR1x4JaNpsr1SqhGlwYmLQTb1FS4AsjmBnGareOEzWE_m4YP-fhgYO/exec?action=diary",
+    "staffVisible": false,
+    "keywords": [
+      "enuresis",
+      "diary"
+    ],
+    "visible": true
+  },
+  {
+    "name": "夜尿症: 患者問診入口",
+    "description": "ID、受診区分、PIN、でログインする。",
+    "group": "夜尿症",
+    "purpose": "患者入口",
+    "url": "https://script.google.com/macros/s/AKfycbx2NE1QHoyi-HYR1x4JaNpsr1SqhGlwYmLQTb1FS4AsjmBnGareOEzWE_m4YP-fhgYO/exec?action=form",
+    "staffVisible": false,
+    "keywords": [
+      "enuresis",
+      "form",
+      "questionnaire",
+      "patient"
+    ],
+    "visible": true
+  },
+  {
+    "name": "小児肥満・SOAP",
+    "description": "医療者専用 SOAPカルテ / JSON出力",
+    "group": "小児肥満",
+    "purpose": "診察",
+    "url": "https://script.google.com/macros/s/AKfycbwQbsrHyz2CjUXpM0Ojk-1zPFZhM1vzFnxHRmhKvv1h/exec",
+    "staffVisible": false,
+    "keywords": [
+      "obesity"
+    ],
+    "visible": true
+  },
+  {
+    "name": "小児肥満 初診問診",
+    "description": "患者の入口。診察券番号 + PIN",
+    "group": "小児肥満",
+    "purpose": "患者入口",
+    "url": "https://script.google.com/macros/s/AKfycbxxDnRkG1HzzYZcufGVGz1ara8Ge7YK6vPR94HGofIhP_48mOmPWSUhynhYMxt9El9Ayw/exec?action=form",
+    "staffVisible": true,
+    "keywords": [
+      "obesity"
+    ],
     "visible": true
   },
   {
     "name": "日計売上 入力",
     "description": "いつものスマホの入力画面",
-    "category": "医師用",
+    "group": "院内業務",
+    "purpose": "院内業務",
     "url": "https://script.google.com/macros/s/AKfycby5krfCy8W62qZzgBule24N37qKkzfp8GLLI8EQ35pE--TKre-RLvpZk4Ykpqk5JoA/exec",
-    "profiles": ["doctor", "admin"],
-    "tags": [],
+    "staffVisible": false,
+    "keywords": [],
     "visible": true
   },
   {
     "name": "パスワード作成",
     "description": "XXXX-XXXX-XXXXの形式でパスワードを作成するアプリ",
-    "category": "医師用",
+    "group": "院内業務",
+    "purpose": "院内業務",
     "url": "https://haman-360.github.io/password-maker/",
-    "profiles": ["doctor", "reception", "admin"],
-    "tags": [],
+    "staffVisible": true,
+    "keywords": [],
+    "visible": true
+  },
+  {
+    "name": "スタッフ用Daily PIN",
+    "description": "4桁の確認コード",
+    "group": "院内業務",
+    "purpose": "受付",
+    "url": "https://docs.google.com/spreadsheets/d/1ZunSK7aWGynMa34dd70YSlE-HfBrHUOQRKJ9oicA2ig/edit?gid=64376694#gid=64376694",
+    "staffVisible": true,
+    "keywords": [],
     "visible": true
   }
 ]

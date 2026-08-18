@@ -13,7 +13,7 @@
         <div>
           <p class="eyebrow">Clinic Portal Admin</p>
           <h1>リンク管理ツール</h1>
-          <p class="profile-label">管理者用</p>
+          <p class="profile-label">編集専用画面</p>
         </div>
         <p class="header-note">登録URLの追加、表示対象、並び順をまとめて調整できます。</p>
       </div>
@@ -23,7 +23,7 @@
       <section class="admin-panel" aria-labelledby="gasTitle">
         <div class="admin-section-heading">
           <h2 id="gasTitle">Google Apps Script連携</h2>
-          <p>スプレッドシートを保存先にして、管理画面から本番データを読み書きします。</p>
+          <p>最初に本番を読み込み、差分を確認してから保存します。保存前の内容は自動バックアップされます。</p>
         </div>
 
         <div class="admin-form">
@@ -39,8 +39,9 @@
 
           <div class="form-actions">
             <button class="secondary-button" id="saveGasSettingsButton" type="button">接続設定を保存</button>
-            <button class="secondary-button" id="loadFromGasButton" type="button">GASから読み込み</button>
-            <button class="primary-button" id="saveToGasButton" type="button">GASへ保存</button>
+            <button class="secondary-button" id="loadFromGasButton" type="button">本番を再読み込み</button>
+            <button class="primary-button" id="saveToGasButton" type="button" disabled>差分を確認して保存</button>
+            <button class="secondary-button" id="restoreDraftButton" type="button" hidden>未反映の下書きを復元</button>
           </div>
         </div>
       </section>
@@ -70,28 +71,32 @@
           </label>
 
           <label>
-            <span>カテゴリ</span>
-            <select id="categoryInput">
-              <option>医師用</option>
-              <option>看護師用</option>
-              <option>受付用</option>
-              <option>管理用</option>
+            <span>疾患・業務グループ</span>
+            <input id="groupInput" type="text" list="groupSuggestions" placeholder="例: 夜尿症" required>
+            <datalist id="groupSuggestions"></datalist>
+          </label>
+
+          <label>
+            <span>用途</span>
+            <select id="purposeInput">
+              <option>診察</option>
+              <option>患者入口</option>
+              <option>受付</option>
+              <option>データ確認</option>
+              <option>院内業務</option>
               <option>その他</option>
             </select>
           </label>
 
           <label>
-            <span>タグ</span>
-            <input id="tagsInput" type="text" placeholder="例: 便秘, 喘息, アトピー">
+            <span>検索キーワード</span>
+            <input id="keywordsInput" type="text" placeholder="例: enuresis, enu, diary, おねしょ">
           </label>
 
-          <fieldset class="profile-options">
-            <legend>表示するトップページ</legend>
-            <label><input type="checkbox" name="profiles" value="doctor"> 医師</label>
-            <label><input type="checkbox" name="profiles" value="nurse"> 看護師</label>
-            <label><input type="checkbox" name="profiles" value="reception"> 受付</label>
-            <label><input type="checkbox" name="profiles" value="admin"> 管理者</label>
-          </fieldset>
+          <label class="staff-visible-option">
+            <input id="staffVisibleInput" type="checkbox">
+            <span>スタッフページにも表示する（医師ページには常に表示されます）</span>
+          </label>
 
           <div class="form-actions">
             <button class="primary-button" id="submitButton" type="submit">追加</button>
@@ -103,7 +108,11 @@
       <section class="admin-panel" aria-labelledby="orderTitle">
         <div class="admin-section-heading">
           <h2 id="orderTitle">並び替え</h2>
-          <p>上へ・下へボタンでトップページに出る順番を調整できます。</p>
+          <p>削除したリンクはゴミ箱に移動し、保存前・保存後とも復元できます。</p>
+        </div>
+        <div class="admin-list-toolbar">
+          <button class="secondary-button compact-button is-active" id="showActiveButton" type="button">使用中</button>
+          <button class="secondary-button compact-button" id="showTrashButton" type="button">ゴミ箱</button>
         </div>
         <div class="admin-list" id="adminList"></div>
       </section>
@@ -111,14 +120,15 @@
       <section class="admin-panel" aria-labelledby="exportTitle">
         <div class="admin-section-heading">
           <h2 id="exportTitle">反映用JSON</h2>
-          <p>下書きをプレビューし、問題なければ apps.json の内容として使います。</p>
+          <p>JSONは非常用の手元バックアップです。復元ファイルを選んでも、保存するまでは本番に反映されません。</p>
         </div>
 
         <div class="admin-actions">
           <button class="secondary-button" id="previewButton" type="button">トップページでプレビュー</button>
           <button class="secondary-button" id="copyButton" type="button">JSONをコピー</button>
           <button class="secondary-button" id="downloadButton" type="button">apps.jsonをダウンロード</button>
-          <button class="secondary-button" id="resetDraftButton" type="button">下書きを破棄</button>
+          <label class="secondary-button file-button">JSONから復元<input id="importInput" type="file" accept="application/json,.json" hidden></label>
+          <button class="secondary-button" id="resetDraftButton" type="button">本番の内容に戻す</button>
         </div>
 
         <textarea class="json-output" id="jsonOutput" spellcheck="false" aria-label="apps.json の内容"></textarea>

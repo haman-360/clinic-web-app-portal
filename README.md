@@ -1,119 +1,69 @@
 # Clinic Web App Portal
 
-複数のGoogle Apps Script Webアプリ、GitHub Pagesアプリ、業務用URLを1つの画面から起動するための静的ポータルです。
+院内Webアプリと業務リンクを、疾患・業務または逐次検索から開く静的ポータルです。
 
-## ファイル構成
+## 画面
 
-- `index.html`: 画面本体
-- `style.css`: レスポンシブデザイン
-- `script.js`: `apps.json` の読み込み、検索、カテゴリ絞り込み
-- `apps.json`: 表示するアプリ一覧
-- `admin.html`: URL登録、並び替え、JSON出力を行う管理ツール
-- `admin.js`: 管理ツールの動作
-- `portal-config.js`: Google Apps Script連携などの公開設定
-- `google-apps-script/Code.gs`: スプレッドシート保存用のApps Script
-- `PROJECT.md`: プロジェクト要件
+- 医師用: `index.html` または `?profile=doctor`。使用中の全サイトを表示します。
+- スタッフ用: `?profile=staff`。`staffVisible: true` のサイトだけを表示します。
+- 編集用: `admin.html`。本番読込、追加・編集、ゴミ箱、差分確認、GAS保存を行います。
 
-## アプリを追加する方法
+看護師用と閲覧用の管理者ページはありません。「管理者」は表示対象ではなく、編集画面を扱う権限です。
 
-`apps.json` に次の形式で項目を追加します。
+## データ形式
 
 ```json
 {
-  "name": "アプリ名",
-  "description": "スタッフに表示する説明",
-  "category": "医師用",
+  "name": "夜尿症 日誌",
+  "description": "夜尿日誌を確認します",
+  "group": "夜尿症",
+  "purpose": "診察",
   "url": "https://example.com",
-  "profiles": ["doctor", "nurse"],
-  "tags": ["便秘", "喘息"],
+  "staffVisible": false,
+  "keywords": ["enuresis", "diary"],
   "visible": true
 }
 ```
 
-`category` は次のいずれかを推奨します。
+- `group`: 疾患または業務。左のナビゲーションと一覧の見出しに使います。
+- `purpose`: `診察`、`患者入口`、`受付`、`データ確認`、`院内業務`、`その他`。
+- `staffVisible`: スタッフページにも表示するとき `true`。医師ページには値に関係なく表示されます。
+- `keywords`: 英語、略語、日本語の別名。`enuresis` があれば `e`、`en`、`enu` の途中入力でもヒットします。
+- `visible`: `false` はゴミ箱内の項目です。
 
-- `医師用`
-- `看護師用`
-- `受付用`
-- `管理用`
-- `その他`
+検索は表示名、説明、グループ、用途、キーワードを対象とし、入力イベントごとに即時更新します。Enterは不要です。空白区切りの複数語はAND検索です。
 
-`visible` を `false` にすると画面には表示されません。
+## 安全な保存
 
-`tags` には、疾患名や運用グループなどの絞り込み用タグを入れます。
-たとえば `便秘`、`喘息`、`アトピー` を設定すると、トップページ上部のタグボタンから該当URLだけを表示できます。タグは複数選択でき、選択したタグのいずれかを持つURLが表示されます。
-タグボタンはトップページ上でドラッグして並び替えできます。並び順は同じブラウザに保存され、新しいタグは保存済みのタグの後ろに追加されます。
-タグの色セットは自動作成され、タグボタン、カード背景、起動ボタンに反映されます。気に入らない場合はトップページの「色を作り直す」ボタンで再生成できます。
+管理画面は本番GASの読込に成功するまで保存ボタンを有効にしません。保存時には追加・変更・ゴミ箱件数を表示し、大幅な件数減少には追加確認を求めます。
 
-## 職員別トップページを作る方法
+GAS側では次を行います。
 
-URLに `profile` を付けると、指定した職員・役割向けのリンクだけを表示できます。
+- 保存前の全データを非表示シート `_portal_backups` へ最大100世代保存
+- リビジョン番号による古い画面からの上書き拒否
+- Script Lockによる同時保存の直列化
+- `restoreBackup(行番号)` による復元（復元直前の状態も先にバックアップ）
+- `setupDailyBackupTrigger()` によるGoogle Driveへの日次ファイルコピー
 
-```text
-https://example.github.io/clinic-web-app-portal/?profile=doctor
-https://example.github.io/clinic-web-app-portal/?profile=nurse
-https://example.github.io/clinic-web-app-portal/?profile=reception
-https://example.github.io/clinic-web-app-portal/?profile=admin
-```
+日次コピー先を指定する場合は、スクリプトプロパティへ `BACKUP_FOLDER_ID` を設定するか、`setBackupFolderId("フォルダID")` を別の引数付き関数から呼び出します。
 
-各リンクをどのトップページに表示するかは、`apps.json` の `profiles` で管理します。
+## GAS初期設定・更新
 
-```json
-{
-  "name": "受付用QR作成",
-  "description": "受付スタッフが使うQR作成ページ",
-  "category": "受付用",
-  "url": "https://example.com",
-  "profiles": ["reception", "admin"],
-  "tags": ["便秘"],
-  "visible": true
-}
-```
+更新順序は必ず **GASバックエンド → GitHub Pages** とします。新しい管理画面は、バックアップ対応GASから `revision` が返らない限り保存を有効にしません。
 
-`profile` を付けずにアクセスした場合は、表示中の全リンクが表示されます。
-この仕組みは表示を分けるためのものです。重要なリンクは、Google Apps ScriptやGoogle Driveなどリンク先側でもアクセス制限してください。
-
-## 管理ツールでURLを追加・並び替えする
-
-`admin.html` を開くと、ブラウザ上でURLの追加、既存リンクの編集、表示対象の選択、タグ付け、並び替えができます。
-
-```text
-https://example.github.io/clinic-web-app-portal/admin.html
-```
-
-管理ツールで作った内容は、ブラウザ内の下書きとして保存されます。
-「トップページでプレビュー」を押すと、下書きの内容で `index.html?draft=1` を確認できます。
-
-GitHub Pagesだけでは、ブラウザから直接 `apps.json` を書き換えることはできません。
-本番に反映する場合は、管理ツールで出力したJSONを `apps.json` の内容として更新してください。
-
-## Google Apps Scriptで本番反映する
-
-Google Apps Scriptを使うと、管理画面からスプレッドシートへ保存し、職員用トップページへ反映できます。
-
-1. `google-apps-script/Code.gs` をGoogleスプレッドシートに紐づくApps Scriptへ貼り付けます。
+1. `google-apps-script/Code.gs` を、保存用スプレッドシートに紐づくApps Scriptへ反映します。
 2. `setupPortalSheet()` を1回実行します。
-3. スクリプトプロパティに `ADMIN_TOKEN` という名前で任意の長い管理用パスワードを保存します。
-   - 確認したい場合はApps Scriptで `checkAdminTokenSetting()` を実行します。
-4. Webアプリとしてデプロイします。
-5. `portal-config.js` の `appsScriptEndpoint` にWebアプリURLを設定します。
-6. `admin.html` の「Google Apps Script連携」からURLと管理用トークンを保存し、「GASへ保存」を押します。
+3. スクリプトプロパティ `ADMIN_TOKEN` を設定します。
+4. ブラウザ向けの **Web app** としてデプロイします。
+5. 既存Web appを更新する場合は、種類、実行ユーザー、アクセス対象、既存 `/exec` URLの維持を確認します。
+6. 任意で `setupDailyBackupTrigger()` を1回実行します。
 
-GAS連携後の日常運用は `GAS_OPERATION.md` を参照してください。
+詳細は `GAS_OPERATION.md` と `google-apps-script/README.md` を参照してください。
 
 ## ローカル確認
-
-`fetch` で `apps.json` を読み込むため、直接HTMLファイルを開くのではなく簡易サーバーで確認します。
 
 ```bash
 python3 -m http.server 8000
 ```
 
-ブラウザで `http://localhost:8000` を開きます。
-
-## GitHub Pagesで公開する
-
-1. このリポジトリをGitHubにpushします。
-2. GitHubのリポジトリ設定で `Settings` → `Pages` を開きます。
-3. `GitHub Actions` を選びます。
-4. 発行されたURLにアクセスします。
+`http://localhost:8000/?profile=doctor`、`?profile=staff`、`admin.html` を確認します。

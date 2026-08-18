@@ -1,32 +1,38 @@
 # Google Apps Script backend
 
-このフォルダの `Code.gs` を、Googleスプレッドシートに紐づけた Apps Script に貼り付けます。
+`Code.gs` はポータルの本番データ、保存前バックアップ、競合防止を管理します。
 
 ## 初期設定
 
-1. Googleスプレッドシートを作成します。
-2. `拡張機能` → `Apps Script` を開きます。
-3. `Code.gs` の内容を貼り付けます。
-4. `setupPortalSheet()` を1回実行します。
-   - 1行目に既存データがある場合は、上にヘッダー行を挿入してデータを残します。
-   - 旧形式の `visible` 列だけのシートでは、`visible` の手前に `tags` 列を追加します。
-5. スクリプトプロパティに `ADMIN_TOKEN` という名前で任意の長い管理用パスワードを保存します。
-   - 関数で設定する場合は、別のテスト用関数から `setAdminToken("任意の長い管理用パスワード")` を呼び出します。
-   - Apps Scriptエディタで `setAdminToken` を直接実行すると引数なしで実行されるため、`token is required` になります。
-   - 設定できているか確認したい場合は、`checkAdminTokenSetting()` を実行します。
-6. `デプロイ` → `新しいデプロイ` → `ウェブアプリ` として公開します。
+1. 保存用Googleスプレッドシートの `拡張機能` → `Apps Script` を開きます。
+2. `Code.gs` を反映します。
+3. `setupPortalSheet()` を実行します。
+4. スクリプトプロパティに `ADMIN_TOKEN` を設定し、`checkAdminTokenSetting()` で確認します。
+5. **Web app** としてデプロイします。
 
-実行ユーザーは自分、アクセスできるユーザーは運用に合わせて設定してください。
+既存データの7列形式は、`purpose`、`keywords`、`staffVisible` を加えた10列形式へ自動拡張されます。旧データは読み込み時に新形式へ変換されます。
 
-## GitHub Pages側の設定
+## バックアップ
 
-`portal-config.js` の `appsScriptEndpoint` に、デプロイしたウェブアプリURLを入れます。
+本番保存の直前に、使用中・ゴミ箱を含む全データが `_portal_backups` シートへ保存されます。シートは誤編集防止のため非表示で、直近100世代を保持します。
+
+復元する場合はシートを再表示して対象行を確認し、Apps Scriptエディタから次のような引数付き補助関数を実行します。
 
 ```js
-window.CLINIC_PORTAL_CONFIG = {
-  appsScriptEndpoint: "https://script.google.com/macros/s/xxxxx/exec",
-};
+function restoreSelectedBackup() {
+  return restoreBackup(12);
+}
 ```
 
-管理画面 `admin.html` では、同じURLと管理用トークンを入力して「GASから読み込み」「GASへ保存」ができます。
-保存後は「GASから読み込み」を押して、スプレッドシートへ反映されたことを確認してください。
+復元前の現在データも自動でバックアップされます。
+
+Google Driveへスプレッドシート全体を毎日コピーする場合は、`setupDailyBackupTrigger()` を1回実行します。保存先フォルダを指定する場合はスクリプトプロパティ `BACKUP_FOLDER_ID` を設定します。
+
+## デプロイ時の必須確認
+
+- 種類: Web app
+- 実行ユーザー: 意図した所有者
+- アクセスできるユーザー: 現行運用と同じ対象
+- 既存 `/exec` URL: 原則維持
+
+デプロイ後は実際の `/exec` URLを開き、JSONに `ok: true`、`apps`、`revision` が含まれることを確認します。
